@@ -62,18 +62,29 @@ class InitDataProc:
                       ,'datetime_index' + addstr : 'datetime_index'}
                                     ,inplace=True)
     #baseデータをメインとして、部位ごとのセンサーデータを結合する
-    def merge_partsdata(self,parts_datas):
+    def merge_partsdata(self,parts_datas,fill_type='f'):
+        """fill_type : f -> 前方埋め
+                       z -> ゼロ埋め
+                       m -> 各列平均値埋め
+        """
         for d in parts_datas:
             self.processed_data = self.processed_data.merge(d,
                                             on=['datetime','datetime_index'],
                                             how="outer")
-        #欠損値の平均値埋め
-        target_clms = (trg for trg in self.processed_data.columns
-                        if trg not in ['datetime','datetime_index'])
-        for c in target_clms:
-            m = self.processed_data.loc[:,c].astype(np.float).mean()
-            self.processed_data.loc[:,c] = \
-                    self.processed_data.loc[:,c].fillna(m)
+        if fill_type == 'm':
+            #欠損値の平均値埋め
+            target_clms = (trg for trg in self.processed_data.columns
+                            if trg not in ['datetime','datetime_index'])
+            for c in target_clms:
+                m = self.processed_data.loc[:,c].astype(np.float).mean()
+                self.processed_data.loc[:,c] = \
+                        self.processed_data.loc[:,c].fillna(m)
+        elif fill_type == 'f':
+            #欠損値の前方埋め
+            self.processed_data = self.processed_data.fillna(method='ffill')
+        elif fill_type == 'z':
+            #欠損値の前方埋め
+            self.processed_data = self.processed_data.fillna(0)
     #秒までのグループ内でのインデックスを追加する
     def add_datetime_idx(self):
        #日時を秒までに削除

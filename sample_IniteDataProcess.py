@@ -95,8 +95,8 @@ def ini_parts(basefile,parts,after,label,n):
         merge_datas.append(p.processed_data)
         idx += 1
         
-    #結合
-    inidata_base.merge_partsdata(merge_datas)
+    #結合 欠損値の埋め方指定可
+    inidata_base.merge_partsdata(merge_datas, fill_type='f')
     #正解ラベル追加
     inidata_base.add_label()
     #余分データ削除
