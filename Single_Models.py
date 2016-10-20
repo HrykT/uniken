@@ -89,6 +89,8 @@ class single_model_base:
             scoring='%s_weighted' % score ) # モデルの評価関数の指定
         gs_clf.fit(self.X_train, self.y_train)
         print(gs_clf.grid_scores_)
+        print(u"最適パラメータ")
+        print(gs_clf.best_params_)
         print(u'評価指標')
         from sklearn.metrics import classification_report
         y_pred = gs_clf.predict(self.X_test)
@@ -107,14 +109,14 @@ class svm_rbf(single_model_base):
     def __init__(self,base,target,test_rate):
         from sklearn.svm import SVC
         single_model_base.__init__(self,base,target,test_rate)
-        self.clf = SVC(kernel='rbf', C=1.0, gamma=0.2, random_state=5)
+        self.clf = SVC(kernel='rbf', C=10, gamma=0.0001, random_state=5)
 
 class svm_poly(single_model_base):
     '''SVM　多項式'''
     def __init__(self,base,target,test_rate):
         from sklearn.svm import SVC
         single_model_base.__init__(self,base,target,test_rate)
-        self.clf = SVC(kernel='poly', C=1.0, random_state=5)
+        self.clf = SVC(kernel='poly', C=1.0, degree=2, gamma=0.001, random_state=5)
 
 class kNeighbors(single_model_base):
     """k近傍法による分類"""
@@ -128,7 +130,7 @@ class logistic_regression(single_model_base):
     def __init__(self,base,target,test_rate):
         from sklearn.linear_model import LogisticRegression
         single_model_base.__init__(self,base,target,test_rate)    
-        self.clf = LogisticRegression()
+        self.clf = LogisticRegression(C=1000)
     def show_coefficients(self):
 #        coef = pd.DataFrame({"Name":self.base.columns,
 #                             "Coefficients":np.abs(self.clf.coef_[0])}) \
