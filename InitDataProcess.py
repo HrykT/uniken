@@ -66,7 +66,16 @@ class InitDataProc:
         """fill_type : f -> 前方埋め
                        z -> ゼロ埋め
                        m -> 各列平均値埋め
+                       d -> 欠損行削除
         """
+        if fill_type == 'd':
+            #欠損行を出さない（内部結合）
+            for d in parts_datas:
+                self.processed_data = self.processed_data.merge(d,
+                                         on=['datetime','datetime_index'],
+                                         how="inner")
+            return
+
         for d in parts_datas:
             self.processed_data = self.processed_data.merge(d,
                                             on=['datetime','datetime_index'],
@@ -83,8 +92,10 @@ class InitDataProc:
             #欠損値の前方埋め
             self.processed_data = self.processed_data.fillna(method='ffill')
         elif fill_type == 'z':
-            #欠損値の前方埋め
+            #ゼロ埋め
             self.processed_data = self.processed_data.fillna(0)
+
+        
     #秒までのグループ内でのインデックスを追加する
     def add_datetime_idx(self):
        #日時を秒までに削除
