@@ -121,4 +121,9 @@ class InitDataProc:
                 len(self.processed_data.index) - second + rec_per_sec]
     #ｃｓｖに書き出す
     def output(self,filepath):
+        #ソートする
+        sort_vals = ['datetime', 'datetime_index'] \
+            if 'datetime_index' in self.processed_data.columns else ['datetime']
+        self.processed_data = \
+            self.processed_data.sort_values(by=sort_vals, ascending=True)
         self.processed_data.to_csv(filepath, index=False, encoding='shift-jis')
