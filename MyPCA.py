@@ -14,6 +14,7 @@ class MyPCA:
             from sklearn.preprocessing import StandardScaler
             std = StandardScaler()
             self.std = std.fit_transform(self.base)
+            self.base = self.std
         #pcaオブジェクト初期化
         self.pca = None
     def pca_fit(self,n=2):
