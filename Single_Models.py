@@ -63,7 +63,12 @@ class single_model_base:
         from sklearn.metrics import accuracy_score
         print("%s 純テストデータ正答率 %.6f\r\n" % (self.name.encode('utf-8')
                             , accuracy_score(enc_y, y_pred)))
-        
+
+    def predict_unknowndata(self, X_unknown):
+        #未知なデータの予測
+        y_pred = self.clf.predict(X_unknown)
+        return y_pred
+    
     def closs_vld(self):
         #交差検証
         from sklearn import cross_validation
@@ -109,7 +114,7 @@ class svm_rbf(single_model_base):
     def __init__(self,base,target,test_rate):
         from sklearn.svm import SVC
         single_model_base.__init__(self,base,target,test_rate)
-        self.clf = SVC(kernel='rbf', C=10, gamma=0.0001, random_state=5)
+        self.clf = SVC(kernel='rbf', C=10, gamma=0.001, random_state=5)
 
 class svm_poly(single_model_base):
     '''SVM　多項式'''
