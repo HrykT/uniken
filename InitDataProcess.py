@@ -7,6 +7,8 @@ Created on Tue Aug 30 19:23:34 2016
 
 import pandas as pd
 import numpy as np
+import datetime
+
 
 class InitDataProc:
     def __init__(self, base, axisNames, label, n=5, del_unitchar_cols=[""]):
@@ -41,6 +43,46 @@ class InitDataProc:
         lbl = pd.DataFrame([[self.label] * len(self.processed_data)]).T
         lbl.columns = ["label"]
         self.processed_data = pd.concat([lbl,self.processed_data],axis=1)
+    #混在ラベルを追加する
+    def add_label_mix(self, time_label_list):
+        """time_label_list : 日時範囲とラベル名のリスト(dataframe)
+        そのレコードの時刻～次レコードの時刻まで　をそのレコードのラベルで埋める
+        time_label_list の　ex)
+        2016/10/10 13:04:13 , order
+        2016/10/10 13:15:20 , officework
+        2016/10/10 13:20:13 , order
+        開始日時は加工データの１レコード目と一致していること"""
+        time = time_label_list.ix[:,0]
+        label = time_label_list.ix[:,1]
+        
+        res_label = pd.Series()
+        for idx in range(0,len(time)-1):
+            start = datetime.datetime.strptime(time[idx], '%Y/%m/%d %H:%M:%S')
+            end = datetime.datetime.strptime(time[idx+1], '%Y/%m/%d %H:%M:%S')
+            #指定の開始・終了日時に収まるデータの個数を数える
+            d_filter = \
+                (self.processed_data.apply(
+                    lambda x: datetime.datetime.strptime(x['datetime']
+                                            , '%Y/%m/%d %H:%M:%S'),axis=1) > start)\
+                 and\
+                 (self.processed_data.apply(
+                    lambda x: datetime.datetime.strptime(x['datetime']
+                                            , '%Y/%m/%d %H:%M:%S'),axis=1)< end)
+            cnt = len(self.processed_data[d_filter])
+            #個数分のラベルを生成・追加
+            res_label = pd.concat([res_label, pd.Series([label[idx]] * cnt)], axis=0)
+        else:
+            #最終行までラベルをつける
+            start = datetime.datetime.strptime(time[len(time)], '%Y/%m/%d %H:%M:%S')
+            d_filter = \
+                 start <= self.processed_data.apply(
+                    lambda x: datetime.datetime.strptime(x['datetime']
+                        , '%Y/%m/%d %H:%M:%S'),axis=1)
+            cnt = len(self.processed_data[d_filter])
+            res_label = pd.concat([res_label, pd.Series([label[len(label)]] * cnt)]
+                                , axis=0)
+        self.processed_data.loc["datetime"] = res_label
+        
     #単位文字を削除する
     def delete_unitstr(self,cols):
         for col in cols:
@@ -56,7 +98,7 @@ class InitDataProc:
     def update_columnnames(self,addstr):
         self.processed_data.columns = \
             (c + addstr for c in self.processed_data.columns)
-        #datetime,datetime_indexのみ戻す
+        #datetime,datetime_indexのみ戻す)
         self.processed_data.rename(
             columns = {'datetime' + addstr : 'datetime'
                       ,'datetime_index' + addstr : 'datetime_index'}
@@ -80,10 +122,11 @@ class InitDataProc:
             self.processed_data = self.processed_data.merge(d,
                                             on=['datetime','datetime_index'],
                                             how="outer")
+
         if fill_type == 'm':
             #欠損値の平均値埋め
             target_clms = (trg for trg in self.processed_data.columns
-                            if trg not in ['datetime','datetime_index'])
+                            if trg not in ['datetime','datetime_index'])          
             for c in target_clms:
                 m = self.processed_data.loc[:,c].astype(np.float).mean()
                 self.processed_data.loc[:,c] = \
@@ -119,11 +162,12 @@ class InitDataProc:
         self.processed_data = \
             self.processed_data[second + rec_per_sec :
                 len(self.processed_data.index) - second + rec_per_sec]
-    #ｃｓｖに書き出す
-    def output(self,filepath):
-        #ソートする
+    #日時でソートする
+    def sort_data(self):
         sort_vals = ['datetime', 'datetime_index'] \
             if 'datetime_index' in self.processed_data.columns else ['datetime']
         self.processed_data = \
             self.processed_data.sort_values(by=sort_vals, ascending=True)
+    #ｃｓｖに書き出す
+    def output(self,filepath):
         self.processed_data.to_csv(filepath, index=False, encoding='shift-jis')
