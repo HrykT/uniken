@@ -57,35 +57,36 @@ def ini(before,after,label,n):
     initdata.output(after)
 
 #ファイル初期処理　複数ファイルの結合版　毎回やらなくてよし
-def ini_parts(basefile,parts,after,label,n ,mix_label=None):
+def ini_parts(basefile, parts1, parts2,after,label,n ,mix_label=None):
     #ベースデータ読み込み
     base_dt = pd.read_csv(basefile, sep=",", encoding='shift-jis')
     #結合データ読み込み
-    parts_dt = (pd.read_csv(pt, sep=",", encoding='shift-jis') for pt in parts)
-    ini_merge_proc(base_dt, parts_dt, after, label, n, mix_label)
+    parts_dt1 = pd.read_csv(parts1, sep=",", encoding='shift-jis')
+    parts_dt2 = pd.read_csv(parts2, sep=",", encoding='shift-jis')
+    ini_merge_proc(base_dt, parts_dt1, parts_dt2, after, label, n, mix_label)
     
     
 #同じファイルの前半を学習用、後半をテスト用に別々に加工
-def ini_parts_split(basefile,parts,after_learn,after_test,label,n):
+def ini_parts_split(basefile, parts1, parts2, after_learn, after_test, label, n):
     #ベースデータ読み込み
     base_dt = pd.read_csv(basefile, sep=",", encoding='shift-jis')
     base_learn = base_dt[:len(base_dt.index) // 2]
     base_test = base_dt[(len(base_dt.index) // 2) + 1 :].reset_index(drop=True)
     #結合データ読み込み
-    parts_dt = (pd.read_csv(pt, sep=",", encoding='shift-jis') for pt in parts)
-    parts_learn = []
-    parts_test = []
-    for part in parts_dt:
-        parts_learn.append(part.loc[:len(part.index) // 2])
-        parts_test.append(part.loc[(len(part.index) // 2) + 1:].reset_index(drop=True))
+    parts_dt1 = pd.read_csv(parts1, sep=",", encoding='shift-jis')
+    parts1_learn =parts_dt1.loc[:len(parts_dt1.index) // 2]
+    parts1_test = parts_dt1.loc[(len(parts_dt1.index) // 2) + 1:].reset_index(drop=True)
 
+    parts_dt2 = pd.read_csv(parts2, sep=",", encoding='shift-jis')
+    parts2_learn =parts_dt2.loc[:len(parts_dt2.index) // 2]
+    parts2_test = parts_dt2.loc[(len(parts_dt2.index) // 2) + 1:].reset_index(drop=True)
     #学習データ処理
-    ini_merge_proc(base_learn,parts_learn,after_learn,label,n)
+    ini_merge_proc(base_learn,parts1_learn, parts2_learn, after_learn,label,n)
 
     #テストデータ処理
-    ini_merge_proc(base_test,parts_test,after_test,label,n)    
+    ini_merge_proc(base_test, parts1_test, parts2_test, after_test, label,n)    
 
-def ini_merge_proc(base_dt,parts_dt,after,label,n ,mix_label=None):
+def ini_merge_proc(base_dt,parts1,parts2,after,label,n ,mix_label=None):
     #複数ファイル結合初期処理用の共通関数
     #読み込みデータ、基本列名、ラベル名で初期化
     #ベース
@@ -101,20 +102,25 @@ def ini_merge_proc(base_dt,parts_dt,after,label,n ,mix_label=None):
     inidata_base.update_columnnames("_1")
     
     #パーツ
-    initdata_parts = (inip.InitDataProc(p.drop(del_column, axis=1)
+    initdata_parts1 = inip.InitDataProc(parts1.drop(del_column, axis=1)
                                  ,stat_target
                                  ,label,n
                                  ,del_unitchar_cols=["pitch","roll","azimuth"])
-                        for p in parts_dt)
 
-    idx=2
+    initdata_parts2 = inip.InitDataProc(parts2.drop(del_column, axis=1)
+                                 ,stat_target
+                                 ,label,n
+                                 ,del_unitchar_cols=["pitch","roll","azimuth"])
     merge_datas = []
-    for p in initdata_parts:
-        p.add_datetime_idx()
-        p.add_statvals(name_func)
-        p.update_columnnames("_" + str(idx))
-        merge_datas.append(p.processed_data)
-        idx += 1
+    initdata_parts1.add_datetime_idx()
+    initdata_parts1.add_statvals(name_func)
+    initdata_parts1.update_columnnames("_2")
+    merge_datas.append(initdata_parts1.processed_data)
+
+    initdata_parts2.add_datetime_idx()
+    initdata_parts2.add_statvals(name_func)
+    initdata_parts2.update_columnnames("_3")
+    merge_datas.append(initdata_parts2.processed_data)
         
     #結合
     inidata_base.merge_partsdata(merge_datas,fill_type='m')
