@@ -63,25 +63,26 @@ class InitDataProc:
             d_filter = \
                 (self.processed_data.apply(
                     lambda x: datetime.datetime.strptime(x['datetime']
-                                            , '%Y/%m/%d %H:%M:%S'),axis=1) > start)\
-                 and\
+                                            , '%Y/%m/%d %H:%M:%S'),axis=1) >= start)\
+                 &\
                  (self.processed_data.apply(
                     lambda x: datetime.datetime.strptime(x['datetime']
-                                            , '%Y/%m/%d %H:%M:%S'),axis=1)< end)
+                                            , '%Y/%m/%d %H:%M:%S'),axis=1) < end)
             cnt = len(self.processed_data[d_filter])
             #個数分のラベルを生成・追加
             res_label = pd.concat([res_label, pd.Series([label[idx]] * cnt)], axis=0)
         else:
             #最終行までラベルをつける
-            start = datetime.datetime.strptime(time[len(time)], '%Y/%m/%d %H:%M:%S')
+            start = datetime.datetime.strptime(time[len(time)-1], '%Y/%m/%d %H:%M:%S')
             d_filter = \
-                 start <= self.processed_data.apply(
+                 self.processed_data.apply(
                     lambda x: datetime.datetime.strptime(x['datetime']
-                        , '%Y/%m/%d %H:%M:%S'),axis=1)
+                        , '%Y/%m/%d %H:%M:%S'),axis=1) >= start
             cnt = len(self.processed_data[d_filter])
-            res_label = pd.concat([res_label, pd.Series([label[len(label)]] * cnt)]
+            res_label = pd.concat([res_label, pd.Series([label[len(label)-1]] * cnt)]
                                 , axis=0)
-        self.processed_data.loc["datetime"] = res_label
+        res_label = res_label.reset_index(drop=True)
+        self.processed_data.loc[:,"label"] = res_label.T
         
     #単位文字を削除する
     def delete_unitstr(self,cols):
@@ -167,7 +168,8 @@ class InitDataProc:
         sort_vals = ['datetime', 'datetime_index'] \
             if 'datetime_index' in self.processed_data.columns else ['datetime']
         self.processed_data = \
-            self.processed_data.sort_values(by=sort_vals, ascending=True)
+            self.processed_data.sort_values(by=sort_vals, ascending=True)\
+                .reset_index(drop=True)
     #ｃｓｖに書き出す
     def output(self,filepath):
         self.processed_data.to_csv(filepath, index=False, encoding='shift-jis')
