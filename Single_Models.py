@@ -103,39 +103,39 @@ class single_model_base:
 
 class svm_linear(single_model_base):
     """SVM線形分類"""
-    def __init__(self,base,target,test_rate):
+    def __init__(self,base,target,test_rate, C=1.0):
         from sklearn.svm import SVC
         single_model_base.__init__(self,base,target,test_rate)
-        self.clf = SVC(kernel='linear', C=1.0,random_state=44)
+        self.clf = SVC(kernel='linear', C=C,random_state=5)
 
 class svm_rbf(single_model_base):
     """SVMで高次元空間への射影による分類
     RBFカーネル化を使ってみる"""
-    def __init__(self,base,target,test_rate):
+    def __init__(self,base,target,test_rate, C=10, gamma=0.001):
         from sklearn.svm import SVC
         single_model_base.__init__(self,base,target,test_rate)
-        self.clf = SVC(kernel='rbf', C=10, gamma=0.001, random_state=5)
+        self.clf = SVC(kernel='rbf', C=C, gamma=gamma, random_state=5)
 
 class svm_poly(single_model_base):
     '''SVM　多項式'''
-    def __init__(self,base,target,test_rate):
+    def __init__(self,base,target,test_rate, C=1.0, degree=2, gamma=0.001):
         from sklearn.svm import SVC
         single_model_base.__init__(self,base,target,test_rate)
-        self.clf = SVC(kernel='poly', C=1.0, degree=2, gamma=0.001, random_state=5)
+        self.clf = SVC(kernel='poly', C=C, degree=degree, gamma=gamma, random_state=5)
 
 class kNeighbors(single_model_base):
     """k近傍法による分類"""
-    def __init__(self,base,target,test_rate):
+    def __init__(self,base,target,test_rate, n=5, weights='uniform'):
         from sklearn import neighbors
         single_model_base.__init__(self,base,target,test_rate)    
-        self.clf = neighbors.KNeighborsClassifier(5, weights='uniform')
+        self.clf = neighbors.KNeighborsClassifier(n, weights=weights)
         
 class logistic_regression(single_model_base):
     """ロジスティック回帰による分類"""
-    def __init__(self,base,target,test_rate):
+    def __init__(self,base,target,test_rate, C=1000):
         from sklearn.linear_model import LogisticRegression
         single_model_base.__init__(self,base,target,test_rate)    
-        self.clf = LogisticRegression(C=1000)
+        self.clf = LogisticRegression(C=C)
     def show_coefficients(self):
 #        coef = pd.DataFrame({"Name":self.base.columns,
 #                             "Coefficients":np.abs(self.clf.coef_[0])}) \
@@ -147,6 +147,47 @@ class logistic_regression(single_model_base):
         print(coef[:])
         coef.to_csv("D:\Python\ML\output\logistic_regr_coef.csv", index=False, encoding='shift-jis')
 
+class decision_tree(single_model_base):
+    """決定木分析による分類"""
+    def __init__(self,base,target,test_rate,max_depth=3):
+        from sklearn.tree import DecisionTreeClassifier 
+        single_model_base.__init__(self,base,target,test_rate)    
+        self.clf = DecisionTreeClassifier(max_depth=max_depth)
+
+class k_means(single_model_base):
+    """K-means法による分類"""
+    def __init__(self,base,target,test_rate,n_clusters=8):
+        from sklearn.cluster import KMeans
+        single_model_base.__init__(self,base,target,test_rate)    
+        self.clf = KMeans(n_clusters=n_clusters)
+
+class RandomForest(single_model_base):
+    """ランダムフォレストによる分類"""
+    def __init__(self,base,target,test_rate):
+        from sklearn.ensemble import RandomForestClassifier
+        single_model_base.__init__(self,base,target,test_rate)    
+        self.clf = RandomForestClassifier()
+
+class GBDT(single_model_base):
+    """GradientBoostingDecisionTreeによる分類"""
+    def __init__(self,base,target,test_rate):
+        from sklearn.ensemble import GradientBoostingClassifier
+        single_model_base.__init__(self,base,target,test_rate)    
+        self.clf = GradientBoostingClassifier()
+
+class Adaboost(single_model_base):
+    def __init__(self,base,target,test_rate):
+        from sklearn.ensemble import AdaBoostClassifier
+        single_model_base.__init__(self,base,target,test_rate)  
+        self.clf = AdaBoostClassifier()
+
+class Bagging(single_model_base):
+    """ベース推定器を元にバギングした推定器で分類する"""
+    def __init__(self,base,target,test_rate,estimater=False):
+        from sklearn.ensemble import BaggingClassifier
+        single_model_base.__init__(self,base,target,test_rate)    
+        self.clf = BaggingClassifier(estimater)   
+        
 class naive_bayes(single_model_base):
     """ナイーブベイズ（確率分布別）による分類"""
     def __init__(self,base,target,test_rate):
