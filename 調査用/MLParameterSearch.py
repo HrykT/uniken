@@ -8,13 +8,15 @@ Created on Sat Nov 05 13:17:54 2016
 import os
 import MLProc as mlp
 import pandas as pd
+import codecs
+import Single_Models as md
 
 #共通変数・定数
 curdir = os.getcwd()
 
 ####ステップ数別学習用ファイル加工####
 def learn_data_proc():
-    for step in (5,10,20,30,40,50,60,70,80,90,100):
+    for step in (5,10,20,30,40,50,60,70,80,90,100,150,200,250,300):
         mlp.ini_parts(
                    os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_1_関_発注_胸_20161020165951.csv")
                  ,os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_1_関_発注_腕_20161020165950.csv")
@@ -81,7 +83,7 @@ def test_data_proc():
      "walk",
      "order"]
     ]).T
-    for step in (5,10,20,30,40,50,60,70,80,90,100):
+    for step in (5,10,20,30,40,50,60,70,80,90,100,150,200,250,300):
         mlp.ini_parts(
                    os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_6_関_事務荷物品出し発注_胸_20161020173701.csv")
                  ,os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_6_関_事務荷物品出し発注_腕_20161020173659.csv")
@@ -90,15 +92,20 @@ def test_data_proc():
                  ,"mix",step, mix_label=mixlabel)
         print(u"ステップ%d　処理終了" % step)
 
+#実行
 #test_data_proc()
 
 ######各種検証をループ#######
+def print_and_outfile(out_file, text):
+    print(text)
+    #out_file.write(text)
+    
 def select_usevalue():
     #使用特徴量選択
     #センサー値
     val_sensor = mlp.stat_target
     #部位
-    val_part = {u"胸腕腰":("_1","_2","_3"), u"腕越":("_2","_3")}
+    val_part = {u"胸腕腰":("_1","_2","_3"), u"腕腰":("_2","_3")}
     #統計
     val_stat = {u"平均・分散":("_Avg","_Var"),
                 u"平均・分散・最大・最小":("_Avg","_Var", "_Max", "_Min")}
@@ -126,43 +133,88 @@ def select_usevalue():
             use_vals[kp + u"／" + ks + u"／" + u"全て"] = use_val_se + use_val_st
     return use_vals
 
-feuture_values = select_usevalue()
-indent = "    "
-for step in [5]:
-    print(u"ステップ数%d" % step)
-    #統計量取得ステップごとのループ
-    #学習データ読込
-    y_learn,X_learn = mlp.proc_for_fit(
-        [pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", u"step_n",u"1-1_関_発注_uniken_step%d_processed.csv" % step)),
-         pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", u"step_n",u"1-2_関_棚卸_uniken_step%d_processed.csv" % step)),
-        pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", u"step_n",u"1-3_関_品出し_uniken_step%d_processed.csv" % step)),
-        pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", u"step_n",u"1-4_関_事務_uniken_step%d_processed.csv" % step)),
-        pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", u"step_n",u"1-5_関_掃除_uniken_step%d_processed.csv" % step)),
-        pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", u"step_n",u"1-7_関_歩行_uniken_step%d_processed.csv" % step))]
-                           )
-    #テスト対象データ読込
-    test = pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", u"step_n_test",u"1_6_関_事務荷物品出し発注_step%d_processed.csv" %step))
-
-    #テスト対象から学習不可行動を除く
-    filter_notlearnlbel = (test['label'] != 'nimotsu') & \
-                            (test['label'] != 'service') 
-    y_test,X_test = mlp.proc_for_fit([test[filter_notlearnlbel]])    
- 
-    for fk in feuture_values.iterkeys():
-        #使用特徴量ごとのループ
-        print(indent * 1 + fk)
-        feuture_value = feuture_values[fk]
-        #使用する特徴量抽出
-        X_learn_limit = X_learn[feuture_value]
-        X_test_limit = X_test[feuture_value]
+def run_conbinationtest(out_file):
+    from sklearn.preprocessing import StandardScaler
+    std = StandardScaler()
+    
+    #使用する特徴量のパターンをリストで持つ
+    feuture_values = select_usevalue()
+    #標準出力表示用のインデント
+    indent = "    "
+    
+    res_list = pd.DataFrame()
+    for step in [100]:
+    #for step in (30,40,50,60,70,80,90,100,150,200,250,300):
+    #for step in (5,10,20,30,40,50,60,70,80,90,100,150,200,250,300):
+        print_and_outfile(out_file, u"ステップ数%d" % step)
+        #統計量取得ステップごとのループ
+        #学習データ読込
+        y_learn,X_learn = mlp.proc_for_fit(
+            [pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", u"step_n",u"1-1_関_発注_uniken_step%d_processed.csv" % step)),
+             pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", u"step_n",u"1-2_関_棚卸_uniken_step%d_processed.csv" % step)),
+            pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", u"step_n",u"1-3_関_品出し_uniken_step%d_processed.csv" % step)),
+            pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", u"step_n",u"1-4_関_事務_uniken_step%d_processed.csv" % step)),
+            pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", u"step_n",u"1-5_関_掃除_uniken_step%d_processed.csv" % step)),
+            pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", u"step_n",u"1-7_関_歩行_uniken_step%d_processed.csv" % step))]
+                               )
+        #テスト対象データ読込
+        test = pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", u"step_n_test",u"1_6_関_事務荷物品出し発注_step%d_processed.csv" %step))
+    
+        #テスト対象から学習不可行動を除く
+        filter_notlearnlbel = (test['label'] != 'nimotsu') & \
+                                (test['label'] != 'service') 
+        y_test,X_test = mlp.proc_for_fit([test[filter_notlearnlbel]])
         
-        for algkey in mlp.algs.keys():
-            #使用するアルゴリズムごとのループ
-            model_inst = mlp.algs[algkey](X_learn_limit,y_learn,0.01)
-            model_inst.name = algkey
-            model_inst.fit()
-            pred = model_inst.predict_unknowndata(X_test_limit)
-            pred_enc = model_inst.class_la.inverse_transform(pred)
-            from sklearn.metrics import accuracy_score
-            print(indent * 2 + "%s 純テストデータ正答率 %.6f\r\n" % (algkey.encode('utf-8')
-                   , accuracy_score(y_test, pred_enc)))
+        for std_fit in [True]:
+#        for std_fit in (True,False):
+            #正規化有無のループ
+            print_and_outfile(out_file, indent * 1 + u"正規化：%s" % str(std_fit))
+            #for fk in feuture_values.iterkeys():
+            for fk in [u"胸腕腰／平均・分散・最大・最小／全て"]:
+                #使用特徴量ごとのループ
+                print_and_outfile(out_file, indent * 2 + fk)
+                feuture_value = feuture_values[fk]
+                #使用する特徴量抽出
+                X_learn_limit = X_learn[feuture_value]
+                X_test_limit = X_test[feuture_value]
+                
+                if std_fit:
+                    #データ選択し終えたら正規化
+                    X_learn_limit = std.fit_transform(X_learn_limit)
+                    X_test_limit = std.fit_transform(X_test_limit)
+                
+                #結果行
+                res_list = pd.DataFrame()
+                res_row = pd.DataFrame([[0] * len(mlp.algs.keys())])
+                res_row.columns = mlp.algs.keys()
+                #for algkey in mlp.algs.keys():
+                for algkey in [u"Adaboost"]:
+                    #使用するアルゴリズムごとのループ
+                    #推定器の学習、推定
+                    model_inst = mlp.algs[algkey](X_learn_limit,y_learn,0.01)
+                    model_inst.name = algkey
+                    model_inst.fit()
+                    pred = model_inst.predict_unknowndata(X_test_limit)
+                    #pred_enc = model_inst.class_la.inverse_transform(pred)
+                    y_test_enc = model_inst.class_la.transform(y_test)
+                    from sklearn.metrics import accuracy_score
+                    scr = accuracy_score(y_test_enc, pred)
+                    res_row.loc[:,algkey] = scr
+
+    #                print(indent * 2 + "%s,%.6f\r\n" % (algkey.encode('utf-8')
+    #                       , scr))
+                res_list = res_list.append(res_row)
+                print_and_outfile(out_file, res_list)
+ 
+
+#実行
+#res_file = codecs.open(u'MLParamSearchResult.html', 'a', 'utf-8')
+#try:
+#    run_conbinationtest(res_file)
+#finally:
+#    res_file.close()
+
+def ensemble_Voting():
+    from sklearn.ensemble import VotingClassifier
+    step = 100
+    

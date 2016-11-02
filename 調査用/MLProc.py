@@ -229,8 +229,13 @@ algs =  {
            u"svm_linear" : md.svm_linear
          , u"svm_rbf" : md.svm_rbf
          , u"ｋ_neighbors" : md.kNeighbors
-         ,u"svm_poly": md.svm_poly
+         , u"svm_poly": md.svm_poly
          , u"logistic_regression" : md.logistic_regression
+         , u"decision_tree" : md.decision_tree
+         , u"k_means" : md.k_means
+         , u"RandomForest" : md.RandomForest
+         , u"GBDT" : md.GBDT
+         , u"Adaboost" : md.Adaboost
         }
 
 #最適化に用いるアルゴリズム別パラメータリスト
@@ -247,6 +252,16 @@ alg_params = {
                  , 'degree': [2, 3, 4], 'gamma': [0.001, 0.0001]}
                  
          , u"logistic_regression" : {'C': [1, 10, 100, 1000]}
+         
+         , u"decision_tree" : {'max_depth' : [2,3,4,5,None]}
+         
+         , u"k_means" : {'n_clusters' : [2,4,8,10]}
+         
+         , u"RandomForest" : {'n_estimators' : [3,5,10]}
+         
+         , u"GBDT" : {'n_estimators' : [10,50,100]}
+         
+         , u"Adaboost" : {}
 }
 
 #使用する特徴量
@@ -446,31 +461,31 @@ feuture_value_columns = ["label","datetime","X_acceleration","Y_acceleration",
             
 
 ###学習用とは別の人のデータでテスト###
-#files_learn =[ pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts" ,"learn" ,u"1-1_関_発注_uniken_step25_processed_l.csv"))
-#       , pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts" ,"learn" ,u"1-2_関_棚卸_uniken_step25_processed_l.csv"))
-#       , pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts" ,"learn" ,u"1-3_関_品出し_uniken_step25_processed_l.csv"))
-#       , pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts" ,"learn" ,u"1-4_関_事務_uniken_step25_processed_l.csv"))
-#        , pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts","learn" ,u"1-5_関_掃除_uniken_step25_processed_l.csv"))
-#        , pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts","learn" ,u"1-6_関_歩行_uniken_step25_processed_l.csv"))
+#files_learn =[ pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts",u"分割" ,"learn" ,u"1-1_関_発注_uniken_step25_processed_l.csv"))
+#       , pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts" ,u"分割","learn" ,u"1-2_関_棚卸_uniken_step25_processed_l.csv"))
+#       , pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts" ,u"分割","learn" ,u"1-3_関_品出し_uniken_step25_processed_l.csv"))
+#       , pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts" ,u"分割","learn" ,u"1-4_関_事務_uniken_step25_processed_l.csv"))
+#        , pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts",u"分割","learn" ,u"1-5_関_掃除_uniken_step25_processed_l.csv"))
+#        , pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts",u"分割","learn" ,u"1-6_関_歩行_uniken_step25_processed_l.csv"))
 ##         ]
 ##files_test =[
-#        ,pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts" , u"test" ,u"1-1_関_発注_uniken_step25_processed_t.csv"))
-#       , pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts" ,u"test" ,u"1-2_関_棚卸_uniken_step25_processed_t.csv"))
-#       , pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts" ,u"test" ,u"1-3_関_品出し_uniken_step25_processed_t.csv"))
-#       , pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts" ,u"test" ,u"1-4_関_事務_uniken_step25_processed_t.csv"))
-#        , pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts",u"test" ,u"1-5_関_掃除_uniken_step25_processed_t.csv"))
-#        , pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts",u"test" ,u"1-6_関_歩行_uniken_step25_processed_t.csv"))
+#        ,pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts" ,u"分割", u"test" ,u"1-1_関_発注_uniken_step25_processed_t.csv"))
+#       , pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts" ,u"分割",u"test" ,u"1-2_関_棚卸_uniken_step25_processed_t.csv"))
+#       , pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts" ,u"分割",u"test" ,u"1-3_関_品出し_uniken_step25_processed_t.csv"))
+#       , pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts" ,u"分割",u"test" ,u"1-4_関_事務_uniken_step25_processed_t.csv"))
+#        , pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts",u"分割",u"test" ,u"1-5_関_掃除_uniken_step25_processed_t.csv"))
+#        , pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts",u"分割",u"test" ,u"1-6_関_歩行_uniken_step25_processed_t.csv"))
 #        ]
 
-#files_test = [pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts","test" ,u"1-7_関_事務荷物品出し発注_uniken_step25_processed_t.csv"))]
-#files_test = [pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts","test" ,u"1-7_関_事務荷物品出し発注_学習不可データなし_uniken_step25_processed_t.csv"))]
-#        
+#files_test = [pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts",u"分割","test" ,u"1-7_関_事務荷物品出し発注_uniken_step25_processed_t.csv"))]
+#files_test = [pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts",u"分割","test" ,u"1-7_関_事務荷物品出し発注_学習不可データなし_uniken_step25_processed_t.csv"))]
+        
 #y_learn,X_learn = proc_for_fit(files_learn)
 #y_test,X_test = proc_for_fit(files_test)
-#
-##使う列をそろえる
-##X_test = X_test.drop(["pitch","roll","azimuth"], axis=1)
-#      
+
+#使う列をそろえる
+#X_test = X_test.drop(["pitch","roll","azimuth"], axis=1)
+      
 ##主成分分析
 #import MyPCA as mpca
 #myp1 = mpca.MyPCA(X_learn, standard=True)
@@ -480,7 +495,7 @@ feuture_value_columns = ["label","datetime","X_acceleration","Y_acceleration",
 #myp2 = mpca.MyPCA(X_test, standard=True)
 #X_t_std = myp2.std
 #X_t_pca = myp2.pca_fit(n=50)
-#
+
 #for algkey in algs.keys():
 #    #学習用データで学習
 ##    model_inst = algs[algkey](X_learn,y_learn,0.01)
@@ -504,10 +519,21 @@ feuture_value_columns = ["label","datetime","X_acceleration","Y_acceleration",
     #np.savetxt("predict_result.csv", pred_enc, delimiter=",",  fmt='%s')
     #y_test.to_csv("answer.csv", index=False, encoding='shift-jis')
     
-##グリッドサーチ###
+###グリッドサーチ###
 #X = pd.concat([X_learn,X_test],axis=0)
 #y = pd.concat([y_learn,y_test],axis=0)
-#for algkey in algs.keys():
+#step = 50
+#y,X = proc_for_fit(
+#            [pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", u"step_n",u"1-1_関_発注_uniken_step%d_processed.csv" % step)),
+#             pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", u"step_n",u"1-2_関_棚卸_uniken_step%d_processed.csv" % step)),
+#            pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", u"step_n",u"1-3_関_品出し_uniken_step%d_processed.csv" % step)),
+#            pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", u"step_n",u"1-4_関_事務_uniken_step%d_processed.csv" % step)),
+#            pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", u"step_n",u"1-5_関_掃除_uniken_step%d_processed.csv" % step)),
+#            pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", u"step_n",u"1-7_関_歩行_uniken_step%d_processed.csv" % step)),
+#            pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", u"step_n_test",u"1_6_関_事務荷物品出し発注_step%d_processed.csv" % step))]
+#                               )
+##for algkey in algs.keys():
+#for algkey in [u"logistic_regression"]:
 #    clf_inst = algs[algkey](X, y, 0.3)
 #    clf_inst.name = algkey
 #    clf_inst.grid_search(alg_params[algkey], cv_p=3)
