@@ -16,7 +16,8 @@ curdir = os.getcwd()
 
 ####ステップ数別学習用ファイル加工####
 def learn_data_proc():
-    for step in (5,10,20,30,40,50,60,70,80,90,100,150,200,250,300):
+#    for step in (5,10,20,30,40,50,60,70,80,90,100,150,200,250,300):
+    for step in (60,100):
         mlp.ini_parts(
                    os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_1_関_発注_胸_20161020165951.csv")
                  ,os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_1_関_発注_腕_20161020165950.csv")
@@ -60,7 +61,7 @@ def learn_data_proc():
                  ,"walk",step)
         print(u"ステップ%d　処理終了" % step)
 #実行
-#learn_data_proc()
+learn_data_proc()
 
 ####ステップ数別予測用ファイル加工####
 def test_data_proc():
@@ -83,7 +84,8 @@ def test_data_proc():
      "walk",
      "order"]
     ]).T
-    for step in (5,10,20,30,40,50,60,70,80,90,100,150,200,250,300):
+#    for step in (5,10,20,30,40,50,60,70,80,90,100,150,200,250,300):
+    for step in (60,100):
         mlp.ini_parts(
                    os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_6_関_事務荷物品出し発注_胸_20161020173701.csv")
                  ,os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_6_関_事務荷物品出し発注_腕_20161020173659.csv")
@@ -93,7 +95,7 @@ def test_data_proc():
         print(u"ステップ%d　処理終了" % step)
 
 #実行
-#test_data_proc()
+test_data_proc()
 
 ######各種検証をループ#######
 def print_and_outfile(out_file, text):
