@@ -34,11 +34,12 @@ class single_model_base:
         self.base = base
         from sklearn.cross_validation import train_test_split
         #元データをトレーニング用とテスト用に分割
+        self.state = np.random.RandomState(1)
         self.X_train, self.X_test, self.y_train,self.y_test \
         = train_test_split(base
                          ,self.enc_target
                          ,test_size = test_rate
-                         ,random_state = 0)
+                         ,random_state = self.state)
     def fit(self):
         #学習実行
         self.clf.fit(self.X_train,self.y_train)
@@ -69,22 +70,22 @@ class single_model_base:
         y_pred = self.clf.predict(X_unknown)
         return y_pred
     
-    def closs_vld(self):
+    def closs_vld(self, k=3):
         #交差検証
         from sklearn import cross_validation
-        kfl = cross_validation.KFold(n=len(self.enc_target), n_folds=3,
+        kfl = cross_validation.KFold(n=len(self.enc_target), n_folds=k,
                                      shuffle=True)
         cvs = cross_validation.cross_val_score(self.clf,
                                          self.base, self.enc_target,
                                          cv=kfl, n_jobs=1)
-        print(self.name + u"交差検証 k=%d" % 3)
+        print(self.name + u"交差検証 k=%d" % k)
         print(cvs)
         print("avg（std）: 　%0.3f (+/- %0.3f)"
                 % (cvs.mean(), cvs.std()))
 
     def grid_search(self, tuned_params,cv_p=5):
         #グリッドサーチによるパラメータ最適化
-        print(self.name.encode('utf-8') + 'GridSearch')
+        print(self.name.encode('utf-8') + ' GridSearch')
         score = 'f1'
         from sklearn.grid_search import GridSearchCV
         gs_clf = GridSearchCV(
@@ -101,41 +102,119 @@ class single_model_base:
         y_pred = gs_clf.predict(self.X_test)
         print(classification_report(self.y_test, y_pred))
 
+    def grid_search_otherdata(self, tuned_params, y_unknown, X_unknown, cv_p=5):
+        #初期化時とは別のラベル付きデータでグリッドサーチの結果を確認する
+        print(self.name.encode('utf-8') + ' GridSearch_otherdata')
+        score = 'f1'
+        from sklearn.grid_search import GridSearchCV
+        gs_clf = GridSearchCV(
+            self.clf, # 識別器
+            tuned_params, # 最適化したいパラメータセット 
+            cv=cv_p, # 交差検定の回数
+            scoring='%s_weighted' % score ) # モデルの評価関数の指定
+        gs_clf.fit(self.base, self.enc_target)
+        print(gs_clf.grid_scores_)
+        print(u"最適パラメータ")
+        print(gs_clf.best_params_)
+        print(u'評価指標')
+        from sklearn.metrics import classification_report
+        y_pred = gs_clf.predict(X_unknown)
+        print(classification_report(y_unknown, self.class_la.inverse_transform(y_pred)))
+    
+    def my_grid_search(self, tuned_params, y_unknown, X_unknown):
+        #テスト用データの予測で最適化する
+        #クラスにリテラルで持たせた文字列からモジュールをインポート
+        exec(self.clf_str)
+        #インポート文字列からクラス名を得る
+        d = self.clf_str.split(" ")
+        my_clf = eval("%s()" % d[len(d)-1])
+        params = my_clf.get_params()
+        #文字列として引数をまとめる
+        paramlist = {}
+        for name, vals in tuned_params.iteritems():
+            p = []
+            if name in params.iterkeys():
+                for val in vals:
+                    if type(val) is str:
+                        p.append("%s='%s'," % (name,val))
+                    else:
+                        p.append("%s=%s," % (name,val))
+                paramlist[name] = p
+        
+        import itertools
+        para_comb = ""
+        #直積で組み合わせをとる
+        for pval in paramlist.itervalues():
+            para_comb = pval if para_comb == "" else itertools.product(para_comb,pval)
+            para_comb = ("".join(pc) for pc in para_comb)
+        
+        #文字列化したパラメータの組み合わせごとに学習・予測
+        scores = {}
+        preds = {}
+        for sp in para_comb:
+            print("%s,%s" % (self.name,sp))
+            c= eval("%s(%s)" % (d[len(d)-1],sp))
+            c.fit(self.X_train, self.y_train)
+            y_pred = c.predict(X_unknown)
+            y_test = self.class_la.transform(y_unknown)
+            #テスト正解率表示
+            from sklearn.metrics import accuracy_score
+            score = accuracy_score(y_test,y_pred)
+            print("%.6f\r\n" % score)
+            scores[score] = sp
+            preds[score] = (y_test,y_pred)
+        #ベストスコア
+        print("best:%.6f, %s" % (max(scores.keys()), scores[max(scores.keys())]))
+        #メトリクス
+        from sklearn.metrics import classification_report
+        labels = self.class_la.inverse_transform(np.unique(self.y_train))
+        t,p  = preds[max(scores.keys())]
+        print(classification_report(t, p, target_names=labels))
+        
 class svm_linear(single_model_base):
     """SVM線形分類"""
     def __init__(self,base,target,test_rate, C=1.0):
         from sklearn.svm import SVC
+        self.clf_str = 'from sklearn.svm import SVC'
         single_model_base.__init__(self,base,target,test_rate)
-        self.clf = SVC(kernel='linear', C=C,random_state=5)
+        self.clf = SVC(kernel='linear', C=C, random_state=self.state
+        ,probability=True)
 
 class svm_rbf(single_model_base):
     """SVMで高次元空間への射影による分類
     RBFカーネル化を使ってみる"""
     def __init__(self,base,target,test_rate, C=10, gamma=0.001):
         from sklearn.svm import SVC
+        self.clf_str = 'from sklearn.svm import SVC'
         single_model_base.__init__(self,base,target,test_rate)
-        self.clf = SVC(kernel='rbf', C=C, gamma=gamma, random_state=5)
+        self.clf = SVC(kernel='rbf', C=C, gamma=gamma, random_state=self.state
+        ,probability=True)
 
 class svm_poly(single_model_base):
     '''SVM　多項式'''
     def __init__(self,base,target,test_rate, C=1.0, degree=2, gamma=0.001):
         from sklearn.svm import SVC
+        self.clf_str = 'from sklearn.svm import SVC'
         single_model_base.__init__(self,base,target,test_rate)
-        self.clf = SVC(kernel='poly', C=C, degree=degree, gamma=gamma, random_state=5)
+        self.init_clf = SVC
+        self.clf = SVC(kernel='poly', C=C, degree=degree, gamma=gamma, random_state=self.state
+        ,probability=True)
 
 class kNeighbors(single_model_base):
     """k近傍法による分類"""
     def __init__(self,base,target,test_rate, n=5, weights='uniform'):
-        from sklearn import neighbors
+        from sklearn.neighbors import KNeighborsClassifier
+        self.clf_str = 'from sklearn.neighbors import KNeighborsClassifier'
         single_model_base.__init__(self,base,target,test_rate)    
-        self.clf = neighbors.KNeighborsClassifier(n, weights=weights)
+        self.clf = KNeighborsClassifier(n, weights=weights)
         
 class logistic_regression(single_model_base):
     """ロジスティック回帰による分類"""
     def __init__(self,base,target,test_rate, C=1000):
         from sklearn.linear_model import LogisticRegression
-        single_model_base.__init__(self,base,target,test_rate)    
-        self.clf = LogisticRegression(C=C)
+        self.clf_str = 'from sklearn.linear_model import LogisticRegression'
+        single_model_base.__init__(self,base,target,test_rate)
+        self.clf = LogisticRegression(C=C, random_state=self.state)
     def show_coefficients(self):
 #        coef = pd.DataFrame({"Name":self.base.columns,
 #                             "Coefficients":np.abs(self.clf.coef_[0])}) \
@@ -150,42 +229,56 @@ class logistic_regression(single_model_base):
 class decision_tree(single_model_base):
     """決定木分析による分類"""
     def __init__(self,base,target,test_rate,max_depth=3):
-        from sklearn.tree import DecisionTreeClassifier 
-        single_model_base.__init__(self,base,target,test_rate)    
-        self.clf = DecisionTreeClassifier(max_depth=max_depth)
+        from sklearn.tree import DecisionTreeClassifier
+        single_model_base.__init__(self,base,target,test_rate)
+        self.clf_str = 'from sklearn.tree import DecisionTreeClassifier'
+        self.clf = DecisionTreeClassifier(max_depth=max_depth, random_state=self.state)
 
 class k_means(single_model_base):
     """K-means法による分類"""
     def __init__(self,base,target,test_rate,n_clusters=8):
         from sklearn.cluster import KMeans
         single_model_base.__init__(self,base,target,test_rate)    
-        self.clf = KMeans(n_clusters=n_clusters)
+        self.clf_str = 'from sklearn.cluster import KMeans'
+        self.clf = KMeans(n_clusters=n_clusters, random_state=self.state)
 
 class RandomForest(single_model_base):
     """ランダムフォレストによる分類"""
     def __init__(self,base,target,test_rate):
         from sklearn.ensemble import RandomForestClassifier
-        single_model_base.__init__(self,base,target,test_rate)    
-        self.clf = RandomForestClassifier()
+        single_model_base.__init__(self,base,target,test_rate)
+        self.clf_str = 'from sklearn.ensemble import RandomForestClassifier'
+        self.clf = RandomForestClassifier(random_state=self.state)
 
 class GBDT(single_model_base):
     """GradientBoostingDecisionTreeによる分類"""
     def __init__(self,base,target,test_rate):
         from sklearn.ensemble import GradientBoostingClassifier
-        single_model_base.__init__(self,base,target,test_rate)    
-        self.clf = GradientBoostingClassifier()
+        single_model_base.__init__(self,base,target,test_rate)
+        self.clf_str = 'from sklearn.ensemble import GradientBoostingClassifier'
+        self.clf = GradientBoostingClassifier(random_state=self.state)
 
 class Adaboost(single_model_base):
     def __init__(self,base,target,test_rate):
         from sklearn.ensemble import AdaBoostClassifier
-        single_model_base.__init__(self,base,target,test_rate)  
+        single_model_base.__init__(self,base,target,test_rate)
+        self.clf_str = 'from sklearn.ensemble import AdaBoostClassifier'
         self.clf = AdaBoostClassifier()
 
+class neural_net(single_model_base):
+    """ニューラルネットによる分類"""
+    def __init__(self,base,target,test_rate):
+        from sklearn.neural_network import MLPClassifier
+        single_model_base.__init__(self,base,target,test_rate)  
+        self.clf_str = 'from sklearn.neural_network import MLPClassifier'
+        self.clf = MLPClassifier(solver='lbfgs', alpha=1e-5,
+                     hidden_layer_sizes=(5, 2), random_state=self.state)
+    
 class Bagging(single_model_base):
     """ベース推定器を元にバギングした推定器で分類する"""
     def __init__(self,base,target,test_rate,estimater=False):
         from sklearn.ensemble import BaggingClassifier
-        single_model_base.__init__(self,base,target,test_rate)    
+        single_model_base.__init__(self,base,target,test_rate)
         self.clf = BaggingClassifier(estimater)   
         
 class naive_bayes(single_model_base):
