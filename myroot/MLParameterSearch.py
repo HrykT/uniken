@@ -6,9 +6,10 @@ Created on Sat Nov 05 13:17:54 2016
 """
 
 import os
-import MLProc as mlp
 import pandas as pd
 import codecs
+import numpy as np
+import MLProc as mlp
 import Single_Models as md
 
 #共通変数・定数
@@ -22,46 +23,73 @@ def learn_data_proc():
                    os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_1_関_発注_胸_20161020165951.csv")
                  ,os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_1_関_発注_腕_20161020165950.csv")
                  ,os.path.join(curdir,u"datas",u"20161020_採取データ"  ,u"uniken_1_1_関_発注_腰_20161020165948.csv")
-                 ,os.path.join(curdir,u"datas",u"concat_parts", u"step_n"  ,u"1-1_関_発注_uniken_step%d_processed.csv" % step)
+                 ,os.path.join(curdir,u"datas",u"concat_parts",  u"step_n", "20161020"  ,u"1-1_関_発注_uniken_step%d_processed.csv" % step)
                  ,"order",step)
     
         mlp.ini_parts(
                    os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_2_関_棚卸_胸_20161020170752.csv")
                  ,os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_2_関_棚卸_腕_20161020170749.csv")
                  ,os.path.join(curdir,u"datas",u"20161020_採取データ"  ,u"uniken_1_2_関_棚卸_腰_20161020170747.csv")
-                 ,os.path.join(curdir,u"datas",u"concat_parts", u"step_n"  ,u"1-2_関_棚卸_uniken_step%d_processed.csv" % step)
+                 ,os.path.join(curdir,u"datas",u"concat_parts", u"step_n" , "20161020" ,u"1-2_関_棚卸_uniken_step%d_processed.csv" % step)
                  ,"tanaoroshi",step)
     
         mlp.ini_parts(
                    os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_3_関_品出し_胸_20161020171357.csv")
                  ,os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_3_関_品出し_腕_20161020171356.csv")
                  ,os.path.join(curdir,u"datas",u"20161020_採取データ"  ,u"uniken_1_3_関_品出し_腰_20161020171354.csv")
-                 ,os.path.join(curdir,u"datas",u"concat_parts", u"step_n"  ,u"1-3_関_品出し_uniken_step%d_processed.csv" % step)
+                 ,os.path.join(curdir,u"datas",u"concat_parts", u"step_n" , "20161020" ,u"1-3_関_品出し_uniken_step%d_processed.csv" % step)
                  ,"display",step)
     
         mlp.ini_parts(
                    os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_4_関_事務_胸_20161020172042.csv")
                  ,os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_4_関_事務_腕_20161020172041.csv")
                  ,os.path.join(curdir,u"datas",u"20161020_採取データ"  ,u"uniken_1_4_関_事務_腰_20161020172040.csv")
-                 ,os.path.join(curdir,u"datas",u"concat_parts", u"step_n"  ,u"1-4_関_事務_uniken_step%d_processed.csv" % step)
+                 ,os.path.join(curdir,u"datas",u"concat_parts", u"step_n" , "20161020" ,u"1-4_関_事務_uniken_step%d_processed.csv" % step)
                  ,"officework",step)
     
         mlp.ini_parts(
                    os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_5_関_掃除_胸_20161020172749.csv")
                  ,os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_5_関_掃除_腕_20161020172747.csv")
                  ,os.path.join(curdir,u"datas",u"20161020_採取データ"  ,u"uniken_1_5_関_掃除_腰_20161020172745.csv")
-                 ,os.path.join(curdir,u"datas",u"concat_parts", u"step_n"  ,u"1-5_関_掃除_uniken_step%d_processed.csv" % step)
+                 ,os.path.join(curdir,u"datas",u"concat_parts", u"step_n" , "20161020" ,u"1-5_関_掃除_uniken_step%d_processed.csv" % step)
                  ,"cleaning",step)
     
         mlp.ini_parts(
                    os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_7_関_歩行_胸_20161021121819.csv")
                  ,os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_7_関_歩行_腕_20161021121819.csv")
                  ,os.path.join(curdir,u"datas",u"20161020_採取データ"  ,u"uniken_1_7_関_歩行_腰_20161021121819.csv")
-                 ,os.path.join(curdir,u"datas",u"concat_parts", u"step_n"  ,u"1-7_関_歩行_uniken_step%d_processed.csv" % step)
+                 ,os.path.join(curdir,u"datas",u"concat_parts", u"step_n" , "20161020" ,u"1-7_関_歩行_uniken_step%d_processed.csv" % step)
                  ,"walk",step)
+        mlp.ini_parts(
+                   os.path.join(curdir,u"datas",u"20161102_採取データ",u"uniken_1_1_関_発注_胸_20161102155324.csv")
+                 ,os.path.join(curdir,u"datas" ,u"20161102_採取データ",u"uniken_1_1_関_発注_腕_20161102155324.csv")
+                 ,os.path.join(curdir,u"datas" ,u"20161102_採取データ",u"uniken_1_1_関_発注_腰_20161102155324.csv")
+                 ,os.path.join(curdir,u"datas" ,u"concat_parts", u"step_n" , "20161102" ,u"1-1_関_発注_uniken_step%d_processed.csv" % step)
+                 ,"order",step)
+
+        mlp.ini_parts(
+                   os.path.join(curdir,u"datas",u"20161102_採取データ",u"uniken_1_2_関_モップがけ_胸_20161102160721.csv")
+                 ,os.path.join(curdir,u"datas" ,u"20161102_採取データ",u"uniken_1_2_関_モップがけ_腕_20161102160721.csv")
+                 ,os.path.join(curdir,u"datas" ,u"20161102_採取データ",u"uniken_1_2_関_モップがけ_腰_20161102160721.csv")
+                 ,os.path.join(curdir,u"datas" ,u"concat_parts", u"step_n" , "20161102" ,u"1-2_関_モップ_uniken_step%d_processed.csv" % step)
+                 ,"cleaning",step)
+
+        mlp.ini_parts(
+                   os.path.join(curdir,u"datas",u"20161102_採取データ",u"uniken_1_3_関_棚卸_胸_20161102161332.csv")
+                 ,os.path.join(curdir,u"datas" ,u"20161102_採取データ",u"uniken_1_3_関_棚卸_腕_20161102161332.csv")
+                 ,os.path.join(curdir,u"datas" ,u"20161102_採取データ",u"uniken_1_3_関_棚卸_腰_20161102161332.csv")
+                 ,os.path.join(curdir,u"datas" ,u"concat_parts", u"step_n" , "20161102" ,u"1-3_関_棚卸_uniken_step%d_processed.csv" % step)
+                 ,"walk",step)
+
+        mlp.ini_parts(
+                   os.path.join(curdir,u"datas",u"20161102_採取データ",u"uniken_1_4_関_パソコン事務_胸_20161102174818.csv")
+                 ,os.path.join(curdir,u"datas" ,u"20161102_採取データ",u"uniken_1_4_関_パソコン事務_腕_20161102174818.csv")
+                 ,os.path.join(curdir,u"datas" ,u"20161102_採取データ",u"uniken_1_4_関_パソコン事務_腰_20161102174818.csv")
+                 ,os.path.join(curdir,u"datas" ,u"concat_parts", u"step_n" , "20161102" ,u"1-4_関_事務_uniken_step%d_processed.csv" % step)
+                 ,"officework",step)
         print(u"ステップ%d　処理終了" % step)
 #実行
-learn_data_proc()
+#learn_data_proc()
 
 ####ステップ数別予測用ファイル加工####
 def test_data_proc():
@@ -95,15 +123,39 @@ def test_data_proc():
         print(u"ステップ%d　処理終了" % step)
 
 #実行
-test_data_proc()
+#test_data_proc()
 
 ######各種検証をループ#######
 def print_and_outfile(out_file, text):
     print(text)
     #out_file.write(text)
-    
+
+def get_data(step):
+    y_learn,X_learn = mlp.proc_for_fit(
+    [pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", u"step_n", u"20161020",u"1-1_関_発注_uniken_step%d_processed.csv" % step)),
+     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", u"step_n", u"20161020",u"1-2_関_棚卸_uniken_step%d_processed.csv" % step)),
+     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", u"step_n", u"20161020",u"1-3_関_品出し_uniken_step%d_processed.csv" % step)),
+     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", u"step_n", u"20161020",u"1-4_関_事務_uniken_step%d_processed.csv" % step)),
+     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", u"step_n", u"20161020",u"1-5_関_掃除_uniken_step%d_processed.csv" % step)),
+     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", u"step_n", u"20161020",u"1-7_関_歩行_uniken_step%d_processed.csv" % step)),
+     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", u"step_n", u"20161102",u"1-1_関_発注_uniken_step%d_processed.csv" % step)),
+     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", u"step_n", u"20161102",u"1-2_関_モップ_uniken_step%d_processed.csv" % step)),
+     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", u"step_n", u"20161102",u"1-3_関_棚卸_uniken_step%d_processed.csv" % step)),
+     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", u"step_n", u"20161102",u"1-4_関_事務_uniken_step%d_processed.csv" % step))
+     ]
+     )
+    #テスト対象データ読込
+    test = pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", u"step_n_test",u"1_6_関_事務荷物品出し発注_step%d_processed.csv" %step))
+   
+    #テスト対象から学習不可行動を除く
+    filter_notlearnlbel = (test['label'] != 'nimotsu') & \
+                            (test['label'] != 'service') 
+    y_test,X_test = mlp.proc_for_fit([test[filter_notlearnlbel]])
+    return y_learn,X_learn,y_test,X_test
+
 def select_usevalue():
-    #使用特徴量選択
+    #使用特徴量選択のパターンを生成し、文字列辞書で持つ
+    #キー：パターンを説明する日本語　値：使用する列名の配列
     #センサー値
     val_sensor = mlp.stat_target
     #部位
@@ -123,10 +175,10 @@ def select_usevalue():
             use_val_st = []
             for s in val_sensor:
                 #センサー名ループ
-                for p in part_pattern:
-                    #センサー+部位
-                    use_val_se.append(s + p)
-                    use_vals[kp + u"／" + u"センサー値"] = use_val_se
+#                for p in part_pattern:
+#                    #センサー+部位
+#                    use_val_se.append(s + p)
+#                    use_vals[kp + u"／" + u"センサー値"] = use_val_se
                 for p in part_pattern:
                     #センサーのみ、統計量のみを分けるため、部位のループをもう一度やる
                     for v in stat_pattern:
@@ -141,6 +193,7 @@ def run_conbinationtest(out_file):
     
     #使用する特徴量のパターンをリストで持つ
     feuture_values = select_usevalue()
+
     #標準出力表示用のインデント
     indent = "    "
     
@@ -150,29 +203,15 @@ def run_conbinationtest(out_file):
     #for step in (5,10,20,30,40,50,60,70,80,90,100,150,200,250,300):
         print_and_outfile(out_file, u"ステップ数%d" % step)
         #統計量取得ステップごとのループ
-        #学習データ読込
-        y_learn,X_learn = mlp.proc_for_fit(
-            [pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", u"step_n",u"1-1_関_発注_uniken_step%d_processed.csv" % step)),
-             pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", u"step_n",u"1-2_関_棚卸_uniken_step%d_processed.csv" % step)),
-            pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", u"step_n",u"1-3_関_品出し_uniken_step%d_processed.csv" % step)),
-            pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", u"step_n",u"1-4_関_事務_uniken_step%d_processed.csv" % step)),
-            pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", u"step_n",u"1-5_関_掃除_uniken_step%d_processed.csv" % step)),
-            pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", u"step_n",u"1-7_関_歩行_uniken_step%d_processed.csv" % step))]
-                               )
-        #テスト対象データ読込
-        test = pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", u"step_n_test",u"1_6_関_事務荷物品出し発注_step%d_processed.csv" %step))
-    
-        #テスト対象から学習不可行動を除く
-        filter_notlearnlbel = (test['label'] != 'nimotsu') & \
-                                (test['label'] != 'service') 
-        y_test,X_test = mlp.proc_for_fit([test[filter_notlearnlbel]])
+        #学習データ、テストデータ読込
+        y_learn, X_learn, y_test, X_test = get_data(step)
         
         for std_fit in [True]:
 #        for std_fit in (True,False):
             #正規化有無のループ
             print_and_outfile(out_file, indent * 1 + u"正規化：%s" % str(std_fit))
-            #for fk in feuture_values.iterkeys():
-            for fk in [u"胸腕腰／平均・分散・最大・最小／全て"]:
+            for fk in feuture_values.iterkeys():
+            #for fk in [u"腕腰／平均・分散・最大・最小／全て"]:
                 #使用特徴量ごとのループ
                 print_and_outfile(out_file, indent * 2 + fk)
                 feuture_value = feuture_values[fk]
@@ -189,8 +228,8 @@ def run_conbinationtest(out_file):
                 res_list = pd.DataFrame()
                 res_row = pd.DataFrame([[0] * len(mlp.algs.keys())])
                 res_row.columns = mlp.algs.keys()
-                #for algkey in mlp.algs.keys():
-                for algkey in [u"Adaboost"]:
+                for algkey in mlp.algs.keys():
+                #for algkey in [u"neural_net"]:
                     #使用するアルゴリズムごとのループ
                     #推定器の学習、推定
                     model_inst = mlp.algs[algkey](X_learn_limit,y_learn,0.01)
@@ -210,13 +249,96 @@ def run_conbinationtest(out_file):
  
 
 #実行
-#res_file = codecs.open(u'MLParamSearchResult.html', 'a', 'utf-8')
-#try:
-#    run_conbinationtest(res_file)
-#finally:
-#    res_file.close()
+res_file = codecs.open(u'MLParamSearchResult.html', 'a', 'utf-8')
+try:
+    run_conbinationtest(res_file)
+finally:
+    res_file.close()
 
-def ensemble_Voting():
-    from sklearn.ensemble import VotingClassifier
-    step = 100
+def ensemble_voting():
+    #アンサンブル学習
+    import Voting_Models as vm
+    import itertools
+    from sklearn.preprocessing import StandardScaler
+    std = StandardScaler()
     
+    #使用する特徴量のパターンをリストで持つ
+    feuture_values = select_usevalue()
+    #使えそうなアルゴリズムの一覧
+    voter = [
+             #u"svm_linear", u"svm_rbf",
+             u"ｋ_neighbors", u"svm_poly",
+             u"logistic_regression",  u"RandomForest"
+             #, u"GBDT"
+             ]
+    conb = list(itertools.combinations(voter,3));
+    
+    step = 100
+    yl,xl,yt,xt=get_data(step)
+    feuture_value = feuture_values[u"腕腰／平均・分散・最大・最小／センサー値"]
+    
+    xl_std = std.fit_transform(xl[feuture_value])
+    xt_std = std.fit_transform(xt[feuture_value])
+        
+    for vc in conb:
+        clfs = []
+        #使う推定機のリストを作る
+        for v in vc:
+            model_inst = mlp.algs[v](xl_std,yl,0.2)
+            clfs.append((v,model_inst.clf))
+    
+        #アンサンブル推定機の学習
+        ens = vm.Voting_Model(xl_std, yl, 0.3, clfs)
+        ens.name = u"Voting[%s]" % ",".join(vc)
+        ens.fit()
+        
+        #学習データ内での精度
+        ens.show_score()        
+        
+        #精度
+        ens.test_otherdata(yt, xt_std)
+        
+#ensemble_voting()
+    
+def closs_val():
+    from sklearn.preprocessing import StandardScaler
+    std = StandardScaler()
+    
+    feuture_values = select_usevalue()
+    step = 60
+    yl,xl,yt,xt=get_data(step)
+    feuture_value = feuture_values[u"腕腰／平均・分散・最大・最小／全て"]
+    
+    xl_std = std.fit_transform(xl[feuture_value])
+    xt_std = std.fit_transform(xt[feuture_value])
+    x=np.r_[xl_std,xt_std]
+    y=pd.DataFrame(np.r_[yl,yt])
+    
+    for algkey in [u"logistic_regression"]:
+    #for algkey in mlp.algs.keys():
+        #交差検証実行
+        clf = mlp.algs[algkey](x , y, 0.1, C=10)
+        clf.name = algkey
+        clf.closs_vld(k=10)
+
+#closs_val()
+
+def gridsearch():    
+    from sklearn.preprocessing import StandardScaler
+    std = StandardScaler()
+    
+    feuture_values = select_usevalue()
+    step = 100
+    yl,xl,yt,xt=get_data(step)
+    feuture_value = feuture_values[u"腕腰／平均・分散・最大・最小／全て"]
+    
+    xl_std = std.fit_transform(xl[feuture_value])
+    xt_std = std.fit_transform(xt[feuture_value])
+    
+    for algkey in [u"logistic_regression"]:
+        #使用するアルゴリズムごとのループ
+        #推定器の学習、推定
+        model_inst = mlp.algs[algkey](xl_std,yl,0.01)
+        model_inst.name = algkey
+        model_inst.my_grid_search(mlp.alg_params[algkey], yt, xt_std)
+#gridsearch()

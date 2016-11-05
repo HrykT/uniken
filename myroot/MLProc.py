@@ -190,7 +190,7 @@ def run_crossval(model_class, feuture_values, labels,
                  test_rate, clf_name):
     clf = model_class(feuture_values,labels,test_rate)
     clf.name = clf_name
-    clf.closs_vld()
+    clf.closs_vld(k=10)
 
 #予測をグラフにプロット
 def showplot(single_model, clf, count, xlbl, ylbl):
@@ -236,20 +236,21 @@ algs =  {
          , u"RandomForest" : md.RandomForest
          , u"GBDT" : md.GBDT
          , u"Adaboost" : md.Adaboost
+         , u"neural_net" : md.neural_net
         }
 
 #最適化に用いるアルゴリズム別パラメータリスト
 alg_params = {
            u"svm_linear" : {'C': [1, 10, 100, 1000], 'kernel': ['linear']}
            
-         , u"svm_rbf" : {'C': [1, 10, 100, 1000], 'kernel': ['rbf']
-                         , 'gamma': [0.001, 0.0001]}
+         , u"svm_rbf" : {'C': [10, 100], 'kernel': ['rbf']
+                         , 'gamma': [0.001, 0.1, 1.0]}
                          
          , u"ｋ_neighbors" : {u'n_neighbors': [1,3,5]
                              , u'weights': ['uniform','distance']}
                              
-         ,u"svm_poly": {'C': [1, 10, 100, 1000], 'kernel': ['poly']
-                 , 'degree': [2, 3, 4], 'gamma': [0.001, 0.0001]}
+         ,u"svm_poly": {'C': [100, 1000], 'kernel': ['poly']
+                 , 'degree': [3, 4], 'gamma': [0.001, 0.1, 1.0]}
                  
          , u"logistic_regression" : {'C': [1, 10, 100, 1000]}
          
@@ -262,8 +263,10 @@ alg_params = {
          , u"GBDT" : {'n_estimators' : [10,50,100]}
          
          , u"Adaboost" : {}
-}
-
+         
+         , u"neural_net" :{'activation' : ['identity', 'logistic', 'tanh', 'relu']
+                           ,'solver' : ['lbfgs', 'sgd', 'adam']}
+         }
 #使用する特徴量
 feuture_value_columns = ["label","datetime","X_acceleration","Y_acceleration",
                          "Z_acceleration","X_acceleration_Avg",
