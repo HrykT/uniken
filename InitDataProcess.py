@@ -139,7 +139,6 @@ class InitDataProc:
             #ゼロ埋め
             self.processed_data = self.processed_data.fillna(0)
 
-        
     #秒までのグループ内でのインデックスを追加する
     def add_datetime_idx(self):
        #日時を秒までに削除
@@ -157,6 +156,22 @@ class InitDataProc:
             before_time = row['datetime']
             grp_idx_clm.append(grp_idx)
         self.processed_data.loc[:,'datetime_index'] = grp_idx_clm
+
+    #n行先までの行を全て新たな属性として右列方向に追加する
+    def add_column_next_row(self,n=1):
+        #現在の加工済み状態をセーブ
+        proc_temp = self.processed_data.copy()
+        for step in range(1,n):
+            #先頭step行を削除したデータを作る
+            base_del = proc_temp.ix[step:]
+            #datetimeは外し、列名を修正する
+            base_del = base_del.drop(['datetime','datetime_index'], axis=1)
+            base_del.columns = (c + "_" + str(step) for c in base_del.columns)
+            print base_del.columns
+            #元データと結合する
+            self.processed_data = pd.concat([self.processed_data,base_del],axis=1,
+                                       ignore_index=True)
+        
     #最初と最後のn秒分のデータを捨てる 200msごとのレコードとする
     def drop_record_first_last(self,second=5):
         rec_per_sec = 5

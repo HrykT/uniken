@@ -136,6 +136,56 @@ def ini_merge_proc(base_dt,parts1,parts2,after,label,n ,mix_label=None):
     #ファイル保存
     inidata_base.output(after)
 
+#初期処理 未来レコードの横連結版
+def ini_concat_nextrec(basefile, parts1, parts2,after,label,n ,mix_label=None):
+    #ベースデータ読み込み
+    base_dt = pd.read_csv(basefile, sep=",", encoding='shift-jis')
+    #結合データ読み込み
+    parts1 = pd.read_csv(parts1, sep=",", encoding='shift-jis')
+    parts2 = pd.read_csv(parts2, sep=",", encoding='shift-jis')
+    
+    #読み込みデータ、基本列名、ラベル名で初期化
+    #ベース
+    inidata_base = inip.InitDataProc(base_dt.drop(del_column, axis=1)
+                                 ,stat_target
+                                 ,label,n
+                                 ,del_unitchar_cols=["pitch","roll","azimuth"])
+    #datetimeを秒まで切り捨て、秒ごとのインデックス追加
+    inidata_base.add_datetime_idx()
+    
+    #パーツ
+    initdata_parts1 = inip.InitDataProc(parts1.drop(del_column, axis=1)
+                                 ,stat_target
+                                 ,label,n
+                                 ,del_unitchar_cols=["pitch","roll","azimuth"])
+
+    initdata_parts2 = inip.InitDataProc(parts2.drop(del_column, axis=1)
+                                 ,stat_target
+                                 ,label,n
+                                 ,del_unitchar_cols=["pitch","roll","azimuth"])
+    merge_datas = []
+    initdata_parts1.add_datetime_idx()
+    merge_datas.append(initdata_parts1.processed_data)
+
+    initdata_parts2.add_datetime_idx()
+    merge_datas.append(initdata_parts2.processed_data)
+        
+    #結合
+    inidata_base.merge_partsdata(merge_datas,fill_type='m')
+    #ソート
+    inidata_base.sort_data()
+    #未来レコード横結合
+    inidata_base.add_column_next_row(n=5)
+    #正解ラベル追加
+    inidata_base.add_label()
+    #混合ラベルがあれば混合ラベル
+    if mix_label is not None:
+        inidata_base.add_label_mix(mix_label)
+    #余分データ削除
+    inidata_base.drop_record_first_last(second=5)
+    #ファイル保存
+    inidata_base.output(after)
+    
 #学習用データを分類器に渡せる形に加工する
 def proc_for_fit(dates):
     #特定ラベルのみを貼り付けた各学習データファイルを結合する
