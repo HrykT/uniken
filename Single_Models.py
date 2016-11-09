@@ -32,7 +32,7 @@ class single_model_base:
         self.class_la = LabelEncoder()
         self.enc_target = self.class_la.fit_transform(target.values)
         self.base = base
-        from sklearn.cross_validation import train_test_split
+        from sklearn.model_selection import train_test_split
         #元データをトレーニング用とテスト用に分割
         self.state = np.random.RandomState(1)
         self.X_train, self.X_test, self.y_train,self.y_test \
@@ -70,14 +70,18 @@ class single_model_base:
         y_pred = self.clf.predict(X_unknown)
         return y_pred
     
-    def closs_vld(self, k=3):
+    def closs_vld(self, k=3, sampling_type='stkfold'):
         #交差検証
-        from sklearn import cross_validation
-        kfl = cross_validation.KFold(n=len(self.enc_target), n_folds=k,
-                                     shuffle=True)
+        from sklearn.model_selection import cross_validation
+        
+        if sampling_type == 'shuffle':
+            kfl = cross_validation.ShuffleSplit(n=len(self.enc_target), train_size=k,)
+        else:
+            kfl = cross_validation.StratifiedKFold(self.enc_target, n_folds=k, shuffle=True)
+            
         cvs = cross_validation.cross_val_score(self.clf,
-                                         self.base, self.enc_target,
-                                         cv=kfl, n_jobs=1)
+                                             self.base, self.enc_target,
+                                             cv=kfl, n_jobs=1)
         print(self.name + u"交差検証 k=%d" % k)
         print(cvs)
         print("avg（std）: 　%0.3f (+/- %0.3f)"
@@ -161,15 +165,17 @@ class single_model_base:
             from sklearn.metrics import accuracy_score
             score = accuracy_score(y_test,y_pred)
             print("%.6f\r\n" % score)
-            scores[score] = sp
-            preds[score] = (y_test,y_pred)
+            scores[sp] = score
+            preds[sp] = (y_test,y_pred)
         #ベストスコア
-        print("best:%.6f, %s" % (max(scores.keys()), scores[max(scores.keys())]))
-        #メトリクス
-        from sklearn.metrics import classification_report
-        labels = self.class_la.inverse_transform(np.unique(self.y_train))
-        t,p  = preds[max(scores.keys())]
-        print(classification_report(t, p, target_names=labels))
+        for k in scores.iterkeys():
+            if scores[k] == max(scores.values()):
+                print("best:%.6f, %s" % (scores[k], k))
+                t,p  = preds[k] #メトリクス算出用
+                #メトリクス
+                from sklearn.metrics import classification_report
+                labels = self.class_la.inverse_transform(np.unique(self.y_train))
+                print(classification_report(t, p, target_names=labels))
         
 class svm_linear(single_model_base):
     """SVM線形分類"""
