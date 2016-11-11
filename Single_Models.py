@@ -72,16 +72,19 @@ class single_model_base:
     
     def closs_vld(self, k=3, sampling_type='stkfold'):
         #交差検証
-        from sklearn.model_selection import cross_validation
+        from sklearn.model_selection import cross_val_score
         
         if sampling_type == 'shuffle':
-            kfl = cross_validation.ShuffleSplit(n=len(self.enc_target), train_size=k,)
+            from sklearn.model_selection import ShuffleSplit
+            sh = ShuffleSplit(train_size=k,)
+            spl = sh.get_n_splits(self.base, self.enc_target)
         else:
-            kfl = cross_validation.StratifiedKFold(self.enc_target, n_folds=k, shuffle=True)
+            from sklearn.model_selection import StratifiedKFold
+            stk = StratifiedKFold(n_splits =k, shuffle=True)
+            spl = stk.get_n_splits(self.base, self.enc_target)
             
-        cvs = cross_validation.cross_val_score(self.clf,
-                                             self.base, self.enc_target,
-                                             cv=kfl, n_jobs=1)
+        cvs = cross_val_score(self.clf,self.base, self.enc_target,
+                                             cv=spl, n_jobs=1)
         print(self.name + u"交差検証 k=%d" % k)
         print(cvs)
         print("avg（std）: 　%0.3f (+/- %0.3f)"
@@ -258,7 +261,8 @@ class RandomForest(single_model_base):
 
 class GBDT(single_model_base):
     """GradientBoostingDecisionTreeによる分類"""
-    def __init__(self,base,target,test_rate):
+    def __init__(self,base,target,test_rate,n_estimators=100, learning_rate=0.1,
+        max_depth=1):
         from sklearn.ensemble import GradientBoostingClassifier
         single_model_base.__init__(self,base,target,test_rate)
         self.clf_str = 'from sklearn.ensemble import GradientBoostingClassifier'
