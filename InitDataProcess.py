@@ -163,14 +163,13 @@ class InitDataProc:
         proc_temp = self.processed_data.copy()
         for step in range(1,n):
             #先頭step行を削除したデータを作る
-            base_del = proc_temp.ix[step:]
+            base_del = proc_temp.ix[step-1:].reset_index()
             #datetimeは外し、列名を修正する
             base_del = base_del.drop(['datetime','datetime_index'], axis=1)
             base_del.columns = (c + "_" + str(step) for c in base_del.columns)
-            print base_del.columns
             #元データと結合する
-            self.processed_data = pd.concat([self.processed_data,base_del],axis=1,
-                                       ignore_index=True)
+            self.processed_data = pd.concat([self.processed_data,base_del]
+                                            ,axis=1,join='inner')
         
     #最初と最後のn秒分のデータを捨てる 200msごとのレコードとする
     def drop_record_first_last(self,second=5):
