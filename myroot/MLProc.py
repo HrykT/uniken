@@ -152,6 +152,8 @@ def ini_concat_nextrec(basefile, parts1, parts2,after,label,n ,mix_label=None):
                                  ,del_unitchar_cols=["pitch","roll","azimuth"])
     #datetimeを秒まで切り捨て、秒ごとのインデックス追加
     inidata_base.add_datetime_idx()
+    #列名書き換え
+    inidata_base.update_columnnames("_1")
     
     #パーツ
     initdata_parts1 = inip.InitDataProc(parts1.drop(del_column, axis=1)
@@ -165,9 +167,11 @@ def ini_concat_nextrec(basefile, parts1, parts2,after,label,n ,mix_label=None):
                                  ,del_unitchar_cols=["pitch","roll","azimuth"])
     merge_datas = []
     initdata_parts1.add_datetime_idx()
+    initdata_parts1.update_columnnames("_2")
     merge_datas.append(initdata_parts1.processed_data)
 
     initdata_parts2.add_datetime_idx()
+    initdata_parts2.update_columnnames("_3")
     merge_datas.append(initdata_parts2.processed_data)
         
     #結合
@@ -285,7 +289,7 @@ algs =  {
          , u"k_means" : md.k_means
          , u"RandomForest" : md.RandomForest
          , u"GBDT" : md.GBDT
-         , u"Adaboost" : md.Adaboost
+         #, u"Adaboost" : md.Adaboost
          , u"neural_net" : md.neural_net
         }
 
@@ -310,9 +314,10 @@ alg_params = {
          
          , u"RandomForest" : {'n_estimators' : [3,5,10]}
          
-         , u"GBDT" : {'n_estimators' : [10,50,100]}
+         , u"GBDT" : {'n_estimators' : [10,50,100], 'max_depth' : [1,3,5],
+                      'lerning_rate' : [0.1, 0.2, 0.3]}
          
-         , u"Adaboost" : {}
+         #, u"Adaboost" : {}
          
          , u"neural_net" :{'activation' : ['identity', 'logistic', 'tanh', 'relu']
                            ,'solver' : ['lbfgs', 'sgd', 'adam']}
