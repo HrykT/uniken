@@ -94,7 +94,7 @@ class single_model_base:
         #グリッドサーチによるパラメータ最適化
         print(self.name.encode('utf-8') + ' GridSearch')
         score = 'f1'
-        from sklearn.grid_search import GridSearchCV
+        from sklearn.model_selection import GridSearchCV
         gs_clf = GridSearchCV(
             self.clf, # 識別器
             tuned_params, # 最適化したいパラメータセット 
@@ -113,7 +113,7 @@ class single_model_base:
         #初期化時とは別のラベル付きデータでグリッドサーチの結果を確認する
         print(self.name.encode('utf-8') + ' GridSearch_otherdata')
         score = 'f1'
-        from sklearn.grid_search import GridSearchCV
+        from sklearn.model_selection import GridSearchCV
         gs_clf = GridSearchCV(
             self.clf, # 識別器
             tuned_params, # 最適化したいパラメータセット 
@@ -266,7 +266,9 @@ class GBDT(single_model_base):
         from sklearn.ensemble import GradientBoostingClassifier
         single_model_base.__init__(self,base,target,test_rate)
         self.clf_str = 'from sklearn.ensemble import GradientBoostingClassifier'
-        self.clf = GradientBoostingClassifier(random_state=self.state)
+        self.clf = GradientBoostingClassifier(random_state=self.state,
+                                              n_estimators=100, learning_rate=0.1,
+                                              max_depth=1)
 
 class Adaboost(single_model_base):
     def __init__(self,base,target,test_rate):

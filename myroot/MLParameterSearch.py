@@ -19,47 +19,47 @@ curdir = os.getcwd()
 def learn_data_proc(data_proc, outfld):
 #    for step in (5,10,20,30,40,50,60,70,80,90,100,150,200,250,300):
     for step in [60,100]:
-        data_proc(
-                   os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_1_関_発注_胸_20161020165951.csv")
-                 ,os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_1_関_発注_腕_20161020165950.csv")
-                 ,os.path.join(curdir,u"datas",u"20161020_採取データ"  ,u"uniken_1_1_関_発注_腰_20161020165948.csv")
-                 ,os.path.join(curdir,u"datas",u"concat_parts",  outfld, "20161020"  ,u"1-1_関_発注_uniken_step%d_processed.csv" % step)
-                 ,"order",step)
-    
-        data_proc(
-                   os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_2_関_棚卸_胸_20161020170752.csv")
-                 ,os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_2_関_棚卸_腕_20161020170749.csv")
-                 ,os.path.join(curdir,u"datas",u"20161020_採取データ"  ,u"uniken_1_2_関_棚卸_腰_20161020170747.csv")
-                 ,os.path.join(curdir,u"datas",u"concat_parts", outfld , "20161020" ,u"1-2_関_棚卸_uniken_step%d_processed.csv" % step)
-                 ,"tanaoroshi",step)
-    
-        data_proc(
-                   os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_3_関_品出し_胸_20161020171357.csv")
-                 ,os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_3_関_品出し_腕_20161020171356.csv")
-                 ,os.path.join(curdir,u"datas",u"20161020_採取データ"  ,u"uniken_1_3_関_品出し_腰_20161020171354.csv")
-                 ,os.path.join(curdir,u"datas",u"concat_parts", outfld , "20161020" ,u"1-3_関_品出し_uniken_step%d_processed.csv" % step)
-                 ,"display",step)
-    
-        data_proc(
-                   os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_4_関_事務_胸_20161020172042.csv")
-                 ,os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_4_関_事務_腕_20161020172041.csv")
-                 ,os.path.join(curdir,u"datas",u"20161020_採取データ"  ,u"uniken_1_4_関_事務_腰_20161020172040.csv")
-                 ,os.path.join(curdir,u"datas",u"concat_parts", outfld , "20161020" ,u"1-4_関_事務_uniken_step%d_processed.csv" % step)
-                 ,"officework",step)
-    
-        data_proc(
-                   os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_5_関_掃除_胸_20161020172749.csv")
-                 ,os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_5_関_掃除_腕_20161020172747.csv")
-                 ,os.path.join(curdir,u"datas",u"20161020_採取データ"  ,u"uniken_1_5_関_掃除_腰_20161020172745.csv")
-                 ,os.path.join(curdir,u"datas",u"concat_parts", outfld , "20161020" ,u"1-5_関_掃除_uniken_step%d_processed.csv" % step)
-                 ,"cleaning",step)
-    
-        data_proc(
-                   os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_7_関_歩行_胸_20161021121819.csv")
-                 ,os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_7_関_歩行_腕_20161021121819.csv")
-                 ,os.path.join(curdir,u"datas",u"20161020_採取データ"  ,u"uniken_1_7_関_歩行_腰_20161021121819.csv")
-                 ,os.path.join(curdir,u"datas",u"concat_parts", outfld , "20161020" ,u"1-7_関_歩行_uniken_step%d_processed.csv" % step)
-                 ,"walk",step)
+#        data_proc(
+#                   os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_1_関_発注_胸_20161020165951.csv")
+#                 ,os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_1_関_発注_腕_20161020165950.csv")
+#                 ,os.path.join(curdir,u"datas",u"20161020_採取データ"  ,u"uniken_1_1_関_発注_腰_20161020165948.csv")
+#                 ,os.path.join(curdir,u"datas",u"concat_parts",  outfld, "20161020"  ,u"1-1_関_発注_uniken_step%d_processed.csv" % step)
+#                 ,"order",step)
+#    
+#        data_proc(
+#                   os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_2_関_棚卸_胸_20161020170752.csv")
+#                 ,os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_2_関_棚卸_腕_20161020170749.csv")
+#                 ,os.path.join(curdir,u"datas",u"20161020_採取データ"  ,u"uniken_1_2_関_棚卸_腰_20161020170747.csv")
+#                 ,os.path.join(curdir,u"datas",u"concat_parts", outfld , "20161020" ,u"1-2_関_棚卸_uniken_step%d_processed.csv" % step)
+#                 ,"tanaoroshi",step)
+#    
+#        data_proc(
+#                   os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_3_関_品出し_胸_20161020171357.csv")
+#                 ,os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_3_関_品出し_腕_20161020171356.csv")
+#                 ,os.path.join(curdir,u"datas",u"20161020_採取データ"  ,u"uniken_1_3_関_品出し_腰_20161020171354.csv")
+#                 ,os.path.join(curdir,u"datas",u"concat_parts", outfld , "20161020" ,u"1-3_関_品出し_uniken_step%d_processed.csv" % step)
+#                 ,"display",step)
+#    
+#        data_proc(
+#                   os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_4_関_事務_胸_20161020172042.csv")
+#                 ,os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_4_関_事務_腕_20161020172041.csv")
+#                 ,os.path.join(curdir,u"datas",u"20161020_採取データ"  ,u"uniken_1_4_関_事務_腰_20161020172040.csv")
+#                 ,os.path.join(curdir,u"datas",u"concat_parts", outfld , "20161020" ,u"1-4_関_事務_uniken_step%d_processed.csv" % step)
+#                 ,"officework",step)
+#    
+#        data_proc(
+#                   os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_5_関_掃除_胸_20161020172749.csv")
+#                 ,os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_5_関_掃除_腕_20161020172747.csv")
+#                 ,os.path.join(curdir,u"datas",u"20161020_採取データ"  ,u"uniken_1_5_関_掃除_腰_20161020172745.csv")
+#                 ,os.path.join(curdir,u"datas",u"concat_parts", outfld , "20161020" ,u"1-5_関_掃除_uniken_step%d_processed.csv" % step)
+#                 ,"cleaning",step)
+#    
+#        data_proc(
+#                   os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_7_関_歩行_胸_20161021121819.csv")
+#                 ,os.path.join(curdir,u"datas" ,u"20161020_採取データ"  ,u"uniken_1_7_関_歩行_腕_20161021121819.csv")
+#                 ,os.path.join(curdir,u"datas",u"20161020_採取データ"  ,u"uniken_1_7_関_歩行_腰_20161021121819.csv")
+#                 ,os.path.join(curdir,u"datas",u"concat_parts", outfld , "20161020" ,u"1-7_関_歩行_uniken_step%d_processed.csv" % step)
+#                 ,"walk",step)
         data_proc(
                    os.path.join(curdir,u"datas",u"20161102_採取データ",u"uniken_1_1_関_発注_胸_20161102155324.csv")
                  ,os.path.join(curdir,u"datas" ,u"20161102_採取データ",u"uniken_1_1_関_発注_腕_20161102155324.csv")
@@ -89,7 +89,7 @@ def learn_data_proc(data_proc, outfld):
                  ,"officework",step)
         print(u"ステップ%d　処理終了" % step)
 #実行
-#learn_data_proc(mlp.ini_concat_nextrec ,u"next_n")
+#learn_data_proc(mlp.ini_parts ,u"step_n")
 
 
 ####ステップ数別予測用ファイル加工####
@@ -124,31 +124,35 @@ def test_data_proc(data_proc, outfld):
         print(u"ステップ%d　処理終了" % step)
 
 #実行
-#test_data_proc(mlp.ini_concat_nextrec ,u"next_n_test")
+#test_data_proc(mlp.ini_concat_nextrec ,u"step_n_test")
 
 ######各種検証をループ#######
 def print_and_outfile(out_file, text):
     print(text)
     #out_file.write(text)
 
-def get_data(step,fold):
+def get_data(step, fold):
     y_learn,X_learn = mlp.proc_for_fit(
     [
-     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold, u"20161020",u"1-1_関_発注_uniken_step%d_processed.csv" % step)),
-     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold, u"20161020",u"1-2_関_棚卸_uniken_step%d_processed.csv" % step)),
-     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold, u"20161020",u"1-3_関_品出し_uniken_step%d_processed.csv" % step)),
-     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold, u"20161020",u"1-4_関_事務_uniken_step%d_processed.csv" % step)),
-     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold, u"20161020",u"1-5_関_掃除_uniken_step%d_processed.csv" % step)),
-     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold, u"20161020",u"1-7_関_歩行_uniken_step%d_processed.csv" % step)),
-#     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold, u"20161102",u"1-1_関_発注_uniken_step%d_processed.csv" % step)),
-#     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold, u"20161102",u"1-2_関_モップ_uniken_step%d_processed.csv" % step)),
-#     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold, u"20161102",u"1-3_関_棚卸_uniken_step%d_processed.csv" % step)),
-#     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold, u"20161102",u"1-4_関_事務_uniken_step%d_processed.csv" % step)),
+#     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold, u"20161020",u"1-1_関_発注_uniken_step%d_processed.csv" % step)),
+#     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold, u"20161020",u"1-2_関_棚卸_uniken_step%d_processed.csv" % step)),
+#     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold, u"20161020",u"1-3_関_品出し_uniken_step%d_processed.csv" % step)),
+#     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold, u"20161020",u"1-4_関_事務_uniken_step%d_processed.csv" % step)),
+#     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold, u"20161020",u"1-5_関_掃除_uniken_step%d_processed.csv" % step)),
+#     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold, u"20161020",u"1-7_関_歩行_uniken_step%d_processed.csv" % step)),
+     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold, u"20161102",u"1-1_関_発注_uniken_step%d_processed.csv" % step)),
+     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold, u"20161102",u"1-2_関_モップ_uniken_step%d_processed.csv" % step)),
+     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold, u"20161102",u"1-3_関_棚卸_uniken_step%d_processed.csv" % step)),
+     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold, u"20161102",u"1-4_関_事務_uniken_step%d_processed.csv" % step)),
      ]
      )
     #テスト対象データ読込
     test = pd.concat([
-     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold + "_test", u"1_6_関_事務荷物品出し発注_step%d_processed.csv" %step)),
+#     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold + "_test", u"1_6_関_事務荷物品出し発注_step%d_processed.csv" %step)),
+     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold, u"20161102",u"1-1_関_発注_uniken_step%d_processed.csv" % step)),
+     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold, u"20161102",u"1-2_関_モップ_uniken_step%d_processed.csv" % step)),
+     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold, u"20161102",u"1-3_関_棚卸_uniken_step%d_processed.csv" % step)),
+     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold, u"20161102",u"1-4_関_事務_uniken_step%d_processed.csv" % step)),
      ],ignore_index=True)
    
     #テスト対象から学習不可行動を除く
@@ -166,6 +170,19 @@ def get_data(step,fold):
     
     return y_learn,xl_std,y_test,xt_std
 
+def get_pred_target_data(path):
+    #予測だけ行うデータの加工
+    data = pd.read_csv(path)
+    time = data.loc[:,"datetime"]
+    
+    from sklearn.preprocessing import StandardScaler
+    std = StandardScaler()
+    feuture_values = select_usevalue(feuture_type='stat')
+    feuture_value = feuture_values[u"腕腰／平均・分散・最大・最小／全て"]
+    pred_data = std.fit_transform(data.loc[:,feuture_value])
+    
+    return time, pred_data
+    
 def select_usevalue(feuture_type='stat'):
     
     use_vals = {}
@@ -285,7 +302,7 @@ def run_conbinationtest(out_file):
 #finally:
 #    res_file.close()
 
-def ensemble_voting():
+def ensemble_voting(save=False):
     #アンサンブル学習
     import Voting_Models as vm
     import itertools
@@ -322,7 +339,22 @@ def ensemble_voting():
         #精度
         ens.test_otherdata(yt, xt)
         
-#ensemble_voting()
+        #保存
+        if save:
+            from datetime import datetime as dt
+            s = md.modelIO()
+            s.save_model(ens.clf
+                , os.path.join("clfs","ens_%s_%s" % 
+                               ("_".join(vc), dt.now().strftime("%Y%m%d%H%M%S"))))
+            #ラベルの変換リストを残す
+            ln = np.unique(yl)
+            lnum = ens.class_la.transform(ln)
+            label_list = (np.c_[ln,lnum]).T
+            np.savetxt(os.path.join("clfs","label_%s_%s" % 
+                               ("_".join(vc), dt.now().strftime("%Y%m%d%H%M%S")))
+                ,label_list, fmt="%s", delimiter=",")
+    
+#ensemble_voting(save=True)
     
 def closs_val():
     step = 100
@@ -343,11 +375,37 @@ def gridsearch():
     step = 100
     yl,xl,yt,xt=get_data(step,"step_n")
     
-    for algkey in [u"logistic_regression"]:
+    for algkey in [u"ｋ_neighbors",u"GBDT"]:
 #    for algkey in mlp.algs.keys():
         #使用するアルゴリズムごとのループ
         #推定器の学習、推定
-        model_inst = mlp.algs[algkey](xl,yl,0.01)
+        model_inst = mlp.algs[algkey](xl,yl,0.3)
         model_inst.name = algkey
-        model_inst.my_grid_search(mlp.alg_params[algkey], yt, xt)
-gridsearch()
+        #model_inst.my_grid_search(mlp.alg_params[algkey], yt, xt)
+        model_inst.grid_search(mlp.alg_params[algkey])
+#gridsearch()
+
+def out_fb_result(clf_path, label_encode_path, data_path):
+    #保存した推定器でデータを予測し結果を保存　フィードバック用の結果も作成する
+    from datetime import datetime as dt
+    l = md.modelIO()
+    clf = l.load_model(clf_path)
+    time, data = get_pred_target_data(data_path)
+    #予測実行、pandasデータフレームとして取得
+    pred = pd.DataFrame(clf.predict(data), columns=["result"])
+    #ラベル名に変換して時間データと結合
+    label_list = pd.read_csv(label_encode_path).to_dict()
+    print(label_list)
+    pred = pred.replace(label_list)
+    res = pd.concat([time,pred], axis=1)
+    
+    res.to_csv(os.path.join(u"results"
+                   ,u"origin_result%s.csv" % dt.now().strftime("%Y%m%d%H%M%S"))
+                   ,index=False)
+
+out_fb_result(os.path.join(curdir,u"clfs",
+                           u"ens_ｋ_neighbors_logistic_regression_GBDT_20161113000002"),
+              os.path.join(curdir,u"clfs",
+                           u"label_ｋ_neighbors_logistic_regression_GBDT_20161113000002"),
+              os.path.join(curdir,u"datas",u"concat_parts", u"step_n"
+                                    , u"20161102",u"1-1_関_発注_uniken_step100_processed.csv"))

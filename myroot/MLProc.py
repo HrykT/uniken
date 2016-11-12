@@ -315,7 +315,7 @@ alg_params = {
          , u"RandomForest" : {'n_estimators' : [3,5,10]}
          
          , u"GBDT" : {'n_estimators' : [10,50,100], 'max_depth' : [1,3,5],
-                      'lerning_rate' : [0.1, 0.2, 0.3]}
+                      'learning_rate' : [0.1, 0.2, 0.3]}
          
          #, u"Adaboost" : {}
          
