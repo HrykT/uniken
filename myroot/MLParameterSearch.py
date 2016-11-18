@@ -134,12 +134,12 @@ def print_and_outfile(out_file, text):
 def get_data(step, fold):
     y_learn,X_learn = mlp.proc_for_fit(
     [
-#     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold, u"20161020",u"1-1_関_発注_uniken_step%d_processed.csv" % step)),
-#     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold, u"20161020",u"1-2_関_棚卸_uniken_step%d_processed.csv" % step)),
-#     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold, u"20161020",u"1-3_関_品出し_uniken_step%d_processed.csv" % step)),
-#     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold, u"20161020",u"1-4_関_事務_uniken_step%d_processed.csv" % step)),
-#     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold, u"20161020",u"1-5_関_掃除_uniken_step%d_processed.csv" % step)),
-#     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold, u"20161020",u"1-7_関_歩行_uniken_step%d_processed.csv" % step)),
+     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold, u"20161020",u"1-1_関_発注_uniken_step%d_processed.csv" % step)),
+     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold, u"20161020",u"1-2_関_棚卸_uniken_step%d_processed.csv" % step)),
+     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold, u"20161020",u"1-3_関_品出し_uniken_step%d_processed.csv" % step)),
+     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold, u"20161020",u"1-4_関_事務_uniken_step%d_processed.csv" % step)),
+     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold, u"20161020",u"1-5_関_掃除_uniken_step%d_processed.csv" % step)),
+     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold, u"20161020",u"1-7_関_歩行_uniken_step%d_processed.csv" % step)),
      pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold, u"20161102",u"1-1_関_発注_uniken_step%d_processed.csv" % step)),
      pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold, u"20161102",u"1-2_関_モップ_uniken_step%d_processed.csv" % step)),
      pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold, u"20161102",u"1-3_関_棚卸_uniken_step%d_processed.csv" % step)),
@@ -148,11 +148,8 @@ def get_data(step, fold):
      )
     #テスト対象データ読込
     test = pd.concat([
-#     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold + "_test", u"1_6_関_事務荷物品出し発注_step%d_processed.csv" %step)),
-     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold, u"20161102",u"1-1_関_発注_uniken_step%d_processed.csv" % step)),
-     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold, u"20161102",u"1-2_関_モップ_uniken_step%d_processed.csv" % step)),
-     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold, u"20161102",u"1-3_関_棚卸_uniken_step%d_processed.csv" % step)),
-     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold, u"20161102",u"1-4_関_事務_uniken_step%d_processed.csv" % step)),
+     pd.read_csv(os.path.join(curdir,u"datas",u"concat_parts", fold + "_test", u"1_6_関_事務荷物品出し発注_step%d_processed.csv" %step)),
+
      ],ignore_index=True)
    
     #テスト対象から学習不可行動を除く
@@ -237,7 +234,7 @@ def run_conbinationtest(out_file):
     std = StandardScaler()
     
     #使用する特徴量のパターンをリストで持つ
-    feuture_values = select_usevalue(feuture_type='next')
+    #feuture_values = select_usevalue(feuture_type='stat')
 
     #標準出力表示用のインデント
     indent = "    "
@@ -249,7 +246,7 @@ def run_conbinationtest(out_file):
         print_and_outfile(out_file, u"ステップ数%d" % step)
         #統計量取得ステップごとのループ
         #学習データ、テストデータ読込
-        y_learn, X_learn, y_test, X_test = get_data(step)
+        y_learn, X_learn, y_test, X_test = get_data(step, "step_n")
         
         for std_fit in [True]:
         #for std_fit in (True,False):
@@ -315,9 +312,9 @@ def ensemble_voting(save=False):
              #u"svm_linear", u"svm_rbf",
              u"ｋ_neighbors" : md.kNeighbors(xl,yl,0.2, n=5, weights='uniform'), 
              #u"neural_net",
-             u"logistic_regression" : md.logistic_regression(xl,yl,0.2, C=10),
+             u"logistic_regression" : md.logistic_regression(xl,yl,0.2, C=100),
              #u"RandomForest",
-             u"GBDT" : md.GBDT(xl,yl,0.2, max_depth=3,
+             u"GBDT" : md.GBDT(xl,yl,0.2, max_depth=1,
                                                      n_estimators=100
                                                      ,learning_rate=0.1)
              }
@@ -329,7 +326,7 @@ def ensemble_voting(save=False):
         for k in vc:
             clfs.append((k,voter[k].clf))
         #アンサンブル推定機の学習
-        ens = vm.Voting_Model(xl, yl, 0.3, clfs)
+        ens = vm.Voting_Model(xl, yl, 0.01, clfs)
         ens.name = u"Voting[%s]" % ",".join(vc)
         ens.fit()
         
@@ -375,37 +372,88 @@ def gridsearch():
     step = 100
     yl,xl,yt,xt=get_data(step,"step_n")
     
-    for algkey in [u"ｋ_neighbors",u"GBDT"]:
+    for algkey in [u"ｋ_neighbors"]:
 #    for algkey in mlp.algs.keys():
         #使用するアルゴリズムごとのループ
         #推定器の学習、推定
         model_inst = mlp.algs[algkey](xl,yl,0.3)
         model_inst.name = algkey
         #model_inst.my_grid_search(mlp.alg_params[algkey], yt, xt)
-        model_inst.grid_search(mlp.alg_params[algkey])
+        model_inst.my_grid_search(mlp.alg_params[algkey], yt, xt)
 #gridsearch()
+
+def Unsupervise_to_supervise():
+    step = 100
+    yl,xl,yt,xt=get_data(step,"step_n")
+    data = np.r_[xl,xt]
+    true_label = np.r_[yl,yt]
+    
+    #教師なし学習でのクラス分け
+    clst = md.k_means(n_clusters=8)
+    #clst = md.AgglomerativeClustering()
+    labels = pd.DataFrame(clst.clustering(data))
+
+    #1-of-K表現にする
+    from sklearn.preprocessing import OneHotEncoder
+    ohe = OneHotEncoder(categorical_features=[0])
+    class_data = ohe.fit_transform(labels).toarray()
+
+    #分けたクラスを新たな学習データとして生成（５秒先までのクラスラベルを列に持つ）
+    new_data = class_data.copy()
+    for step in range(1,25):
+        #先頭step行を削除したデータを作る
+        base_del = class_data[step-1:]
+        #元データと結合する
+        new_data = np.c_[new_data[:len(base_del)], base_del]
+    
+    #保存
+    #np.savetxt("move_lavel.csv",new_data, delimiter=",", fmt="%s")
+    
+    #正解ラベル切り出し
+    true_label = true_label[:len(new_data)]
+                            
+    #元データに結合
+    print len(data)
+    print len(new_data)
+    new_data = np.r_[new_data, data[:len(new_data)]]
+
+    #いくつか教師あり分類器に学習させる
+    clf = md.svm_rbf(new_data[:15000], pd.DataFrame(true_label[:15000]),0.2)
+    clf.fit()
+    clf.show_score()
+    
+    #学習済み分類器で予測
+    pred = clf.clf.predict(new_data[20000:])
+    
+    #精度
+    from sklearn.metrics import accuracy_score
+    print accuracy_score(clf.class_la.transform(true_label[20000:]), pred)
+    
+Unsupervise_to_supervise()
 
 def out_fb_result(clf_path, label_encode_path, data_path):
     #保存した推定器でデータを予測し結果を保存　フィードバック用の結果も作成する
     from datetime import datetime as dt
     l = md.modelIO()
+    
     clf = l.load_model(clf_path)
     time, data = get_pred_target_data(data_path)
     #予測実行、pandasデータフレームとして取得
     pred = pd.DataFrame(clf.predict(data), columns=["result"])
+    
     #ラベル名に変換して時間データと結合
-    label_list = pd.read_csv(label_encode_path).to_dict()
-    print(label_list)
-    pred = pred.replace(label_list)
+    #label_list = pd.read_csv(label_encode_path)
+    #pred = pred.replace(label_list)
+    
     res = pd.concat([time,pred], axis=1)
     
     res.to_csv(os.path.join(u"results"
                    ,u"origin_result%s.csv" % dt.now().strftime("%Y%m%d%H%M%S"))
                    ,index=False)
 
-out_fb_result(os.path.join(curdir,u"clfs",
-                           u"ens_ｋ_neighbors_logistic_regression_GBDT_20161113000002"),
-              os.path.join(curdir,u"clfs",
-                           u"label_ｋ_neighbors_logistic_regression_GBDT_20161113000002"),
-              os.path.join(curdir,u"datas",u"concat_parts", u"step_n"
-                                    , u"20161102",u"1-1_関_発注_uniken_step100_processed.csv"))
+#out_fb_result(os.path.join(curdir,u"clfs",
+#                           u"ens_ｋ_neighbors_logistic_regression_GBDT_20161114204248"),
+#              os.path.join(curdir,u"clfs",
+#                           u"label_ｋ_neighbors_logistic_regression_GBDT_20161114204248"),
+#              os.path.join(curdir,u"datas",u"concat_parts", u"step_n"
+#                                    , u"20161102",u"1-1_関_発注_uniken_step100_processed.csv"))
