@@ -94,7 +94,7 @@ class single_model_base:
         #グリッドサーチによるパラメータ最適化
         print(self.name.encode('utf-8') + ' GridSearch')
         score = 'f1'
-        from sklearn.model_selection import GridSearchCV
+        from sklearn.grid_search import GridSearchCV
         gs_clf = GridSearchCV(
             self.clf, # 識別器
             tuned_params, # 最適化したいパラメータセット 
@@ -113,7 +113,7 @@ class single_model_base:
         #初期化時とは別のラベル付きデータでグリッドサーチの結果を確認する
         print(self.name.encode('utf-8') + ' GridSearch_otherdata')
         score = 'f1'
-        from sklearn.model_selection import GridSearchCV
+        from sklearn.grid_search import GridSearchCV
         gs_clf = GridSearchCV(
             self.clf, # 識別器
             tuned_params, # 最適化したいパラメータセット 
@@ -243,14 +243,30 @@ class decision_tree(single_model_base):
         self.clf_str = 'from sklearn.tree import DecisionTreeClassifier'
         self.clf = DecisionTreeClassifier(max_depth=max_depth, random_state=self.state)
 
-class k_means(single_model_base):
-    """K-means法による分類"""
-    def __init__(self,base,target,test_rate,n_clusters=8):
+class k_means():
+    """K-means法による教師なし分類"""
+    def __init__(self,n_clusters=8):
         from sklearn.cluster import KMeans
-        single_model_base.__init__(self,base,target,test_rate)    
         self.clf_str = 'from sklearn.cluster import KMeans'
-        self.clf = KMeans(n_clusters=n_clusters, random_state=self.state)
+        self.clf = KMeans(n_clusters=n_clusters)
+        self.labels = []
+    def clustering(self,data):
+        self.clf.fit(data)
+        self.labels = self.clf.labels_
+        return self.labels
 
+class AgglomerativeClustering():
+    """AgglomerativeClusteringによる教師なし分類"""
+    def __init__(self,n_clusters=8):
+        from sklearn.cluster import AgglomerativeClustering
+        self.clf_str = 'from sklearn.cluster import MeanShift'
+        self.clf = AgglomerativeClustering(n_clusters=n_clusters)
+        self.labels = []
+    def clustering(self,data):
+        self.clf.fit(data)
+        self.labels = self.clf.labels_
+        return self.labels   
+        
 class RandomForest(single_model_base):
     """ランダムフォレストによる分類"""
     def __init__(self,base,target,test_rate):
@@ -266,9 +282,7 @@ class GBDT(single_model_base):
         from sklearn.ensemble import GradientBoostingClassifier
         single_model_base.__init__(self,base,target,test_rate)
         self.clf_str = 'from sklearn.ensemble import GradientBoostingClassifier'
-        self.clf = GradientBoostingClassifier(random_state=self.state,
-                                              n_estimators=100, learning_rate=0.1,
-                                              max_depth=1)
+        self.clf = GradientBoostingClassifier(random_state=self.state)
 
 class Adaboost(single_model_base):
     def __init__(self,base,target,test_rate):
