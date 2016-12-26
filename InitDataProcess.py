@@ -11,7 +11,7 @@ import datetime
 
 
 class InitDataProc:
-    def __init__(self, base, axisNames, label, n=5, del_unitchar_cols=[""]):
+    def __init__(self, base, axisNames, label, n=5, del_unitchar_cols=[]):
         #加工前データ
         self.base_data = base
         #単位文字削除

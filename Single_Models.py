@@ -44,6 +44,11 @@ class single_model_base:
         #学習実行
         self.clf.fit(self.X_train,self.y_train)
         return self.clf
+    
+    def fit_all(self):
+        #学習実行
+        self.clf.fit(self.base, self.enc_target)
+        return self.clf
         
     def show_score(self):
         #分類器で予測実行
